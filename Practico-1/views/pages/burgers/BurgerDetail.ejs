@@ -2,8 +2,8 @@
 <div class="container mt-5">
   <div class="card mb-3 shadow">
     <div class="row g-0">
-      <div class="col-md-5">
-        <img src="<%= burger.imageUrl %>" class="img-fluid rounded-start" alt="Imagen de <%= burger.name %>">
+      <div class="col-md-5 d-flex align-items-center justify-content-center">
+        <img src="<%= burger.imageUrl %>" class="img-fluid rounded-start" alt="Imagen de <%= burger.name %>" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
       </div>
       <div class="col-md-7">
         <div class="card-body">
@@ -39,8 +39,7 @@
 <script>
   const stars = document.querySelectorAll('.star');
   const tastedCheckbox = document.getElementById('tastedCheckbox');
-
-  // Actualizar las estrellas según el rating guardado
+  let selectedRating = 0;
   stars.forEach(star => {
     star.addEventListener('click', () => {
       selectedRating = parseInt(star.getAttribute('data-value'));

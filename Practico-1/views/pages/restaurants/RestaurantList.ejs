@@ -4,7 +4,7 @@
   <% restaurants.forEach(restaurant => { %>
     <div class="col-md-4">
       <div class="card mb-4">
-        <img src="<%= restaurant.logoUrl %>" class="card-img-top" alt="<%= restaurant.name %>">
+        <img src="<%= restaurant.logoUrl %>" class="card-img-top" alt="<%= restaurant.name %>" style="width: 100%; height: 200px; object-fit: contain;">
         <div class="card-body">
           <h5 class="card-title"><%= restaurant.name %></h5>
           <a href="/restaurants/<%=restaurant.id%>" class="btn btn-primary">Ver menú</a>
