@@ -1,3 +1,5 @@
 module.exports = (app) => {
-    require('./burguer.routes')(app);
+    require('./restaurant.routes')(app);
+    require('./burger.routes')(app);
+    require('./home.routes')(app);
 }

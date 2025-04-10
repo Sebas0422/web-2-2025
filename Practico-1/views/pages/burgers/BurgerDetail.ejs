@@ -1,0 +1,26 @@
+<%- include('../../components/header.ejs') %>
+<div class="container mt-5">
+    <div class="card mb-3 shadow">
+      <div class="row g-0">
+        <div class="col-md-5">
+          <img src="<%= burger.imageUrl %>" class="img-fluid rounded-start" alt="Imagen de <%= burger.name %>">
+        </div>
+        <div class="col-md-7">
+          <div class="card-body">
+            <h2 class="card-title"><%= burger.name %></h2>
+            <p class="card-text text-muted"><%= burger.description %></p>
+            <h4 class="card-text text-success">Bs<%= burger.price.toFixed(2) %></h4>
+
+            <div class="mt-4">
+              <a href="/burgers" class="btn btn-secondary">Volver al menú</a>
+              <a href="/burgers/<%= burger.id %>/edit" class="btn btn-warning">Editar</a>
+              <form action="/burgers/<%= burger.id %>?_method=DELETE" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('../../components/footer.ejs')%>

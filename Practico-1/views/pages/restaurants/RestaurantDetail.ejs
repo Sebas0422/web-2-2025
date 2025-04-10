@@ -1,0 +1,27 @@
+
+<div class="container mt-4">
+  <h1 class="text-center">Restaurante: <%= restaurant.name %></h1>
+
+  <h2 class="text-center mt-5">Menú de Hamburguesas</h2>
+
+  <!-- Mostrar hamburguesas asociadas -->
+  <div class="row">
+    <% if (restaurant.burgers && restaurant.burgers.length > 0) { %>
+      <% restaurant.burgers.forEach(burger => { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <img src="<%= burger.imageUrl %>" class="card-img-top" alt="<%= burger.name %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= burger.name %></h5>
+              <p class="card-text"><%= burger.description %></p>
+              <p class="card-text">$<%= burger.price.toFixed(2) %></p>
+              <a href="/burgers/<%=burger.id%>" class="btn btn-primary">Ver Hamburguesa</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-center">Este restaurante no tiene hamburguesas disponibles en el menú.</p>
+    <% } %>
+  </div>
+</div>

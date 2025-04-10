@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const ejsLayouts = require('express-ejs-layouts');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -10,7 +12,13 @@ const session = require('express-session');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.set(('view engine', 'ejs'));
+app.set('view engine', 'ejs');
+// eslint-disable-next-line no-undef
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(ejsLayouts);
+app.set('layout', 'layouts/main');
+
 app.use(express.static('public'));
 
 app.use(fileUpload({

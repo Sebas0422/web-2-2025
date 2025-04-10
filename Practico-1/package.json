@@ -2,9 +2,12 @@
   "name": "practico-1",
   "version": "1.0.0",
   "main": "index.js",
+  "nodemonConfig": {
+    "ext": "js,json,ejs"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js --ext js,json,ejs"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +18,11 @@
     "bootstrap": "^5.3.5",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-ejs-layouts": "^2.5.1",
     "express-fileupload": "^1.5.1",
     "express-session": "^1.18.1",
     "nodemon": "^3.1.9",
+    "path": "^0.12.7",
     "sequelize": "^6.37.7",
     "sha1": "^1.1.1",
     "sqlite3": "^5.1.7"
