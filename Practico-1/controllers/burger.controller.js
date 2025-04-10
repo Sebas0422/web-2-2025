@@ -1,71 +1,84 @@
 const db = require("../models");
-const burger = db.burger;
+const Burger = db.Burger;
+const Rating = db.Rating
 
-exports.getburgerList = async (req, res) => {
+exports.getBurgerList = async (req, res) => {
   try {
-    const burgers = await burger.findAll();
+    const burgers = await Burger.findAll();
     if (req.headers.accept && req.headers.accept.includes("application/json")) {
       return res.status(200).json(burgers);
     } else {
-      res.render("pages/burgers/burgerList.ejs", { burgers });
+      res.render("pages/burgers/BurgerList.ejs", { burgers });
     }
   } catch (error) {
     res.status(500).json({ message: "Error retrieving burgers", error: error.message || error.toString(), });
   }
 };
 
-exports.getburger = async (req, res) => {
+exports.getBurger = async (req, res) => {
   const { id } = req.params;
   try {
-    const burger = await burger.findByPk(id);
+    const burger = await Burger.findOne({
+      where: { id },
+      include: [{
+        model: Rating,
+        where: { sessionId: req.session.userId },
+        required: false, 
+      }],
+    });
+
     if (!burger) {
-      return res.status(404).json({ message: "burger not found" });
+      return res.status(404).json({ message: "Burger not found" });
     }
+
+    const rating = burger.Ratings && burger.Ratings.length > 0 ? burger.Ratings[0].rating : 0;
+    const tasted = burger.Ratings && burger.Ratings.length > 0 ? burger.Ratings[0].tasted : false;
     if (req.headers.accept && req.headers.accept.includes("application/json")) {
-      return res.status(200).json(burger);
+      return res.status(200).json({ burger, rating, tasted });
     } else {
-      return res.render("pages/burgers/burgerDetail.ejs", { burger });
+      res.render('pages/burgers/BurgerDetail.ejs', { burger, rating, tasted });
     }
   } catch (error) {
     res.status(500).json({ message: "Error retrieving burger", error });
   }
 };
 
-exports.createburger = async (req, res) => {
-  const { errors, burger } = validateburgerForm(req);
+
+exports.createBurger = async (req, res) => {
+  const { errors, burger } = validateBurgerForm(req);
   if (errors) {
     return res.status(400).json(errors);
   }
   try {
-    const newburger = await burger.create(burger);
+    const newburger = await Burger.create(burger);
     res.status(201).json(newburger);
   } catch (error) {
     res.status(500).json({ message: "Error creating burger", error });
   }
 };
 
-exports.updateburger = async (req, res) => {
+exports.updateBurger = async (req, res) => {
   const { id } = req.params;
   const { name, description, price, imageUrl } = req.body;
   try {
-    const [updated] = await burger.update(
+    const [updated] = await Burger.update(
       { name, description, price, imageUrl },
       { where: { id } }
     );
     if (!updated) {
       return res.status(404).json({ message: "burger not found" });
     }
-    const updatedburger = await burger.findByPk(id);
+    const updatedburger = await Burger.findByPk(id);
     res.status(200).json(updatedburger);
   } catch (error) {
     res.status(500).json({ message: "Error updating burger", error });
   }
 };
 
-exports.deleteburger = async (req, res) => {
+exports.deleteBurger = async (req, res) => {
   const { id } = req.params;
   try {
-    const deleted = await burger.destroy({ where: { id } });
+    const deleted = await Burger.destroy({ where: { id } });
     if (!deleted) {
       return res.status(404).json({ message: "burger not found" });
     }
@@ -75,7 +88,7 @@ exports.deleteburger = async (req, res) => {
   }
 };
 
-const validateburgerForm = (req) => {
+const validateBurgerForm = (req) => {
   const { name, description, price, imageUrl } = req.body;
   const errors = {};
   if (!name) errors.name = "Name is required";
@@ -89,3 +102,32 @@ const validateburgerForm = (req) => {
 
   return { errors: null, burger: req.body };
 };
+
+
+exports.rateBurger = async (req, res) => {
+  const { id } = req.params;
+  const { rating, tasted } = req.body;
+  const sessionId = req.session.userId;
+
+  try {
+    const existingRating = await Rating.findOne({
+      where: { burgerId: id, sessionId }
+    });
+
+    if (existingRating) {
+      await existingRating.update({ rating, tasted });
+    } else {
+      await Rating.create({
+        burgerId: id,
+        rating,
+        tasted,
+        sessionId,
+      });
+    }
+
+    res.status(200).json({ message: 'Rating guardado con éxito' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al guardar la calificación', error: err });
+  }
+};
+

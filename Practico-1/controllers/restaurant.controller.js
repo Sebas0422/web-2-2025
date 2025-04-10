@@ -1,6 +1,6 @@
 const db = require("../models");
 const Restaurant = db.Restaurant;
-const burger = db.burger;
+const Burger = db.Burger;
 
 exports.getRestaurantList = async (req, res) => {
   try {
@@ -21,12 +21,11 @@ exports.getRestaurant = async(req, res) => {
 		const restaurant = await Restaurant.findOne({
       where: { id },
       include: [{
-        model: burger,
+        model: Burger,
         as: "burgers",
         required: false,
       }]
     });
-		console.log('Restaurant', restaurant)
 		if(!restaurant){
 			return res.status(404).json({message:'Restaurant not found'})
 		}

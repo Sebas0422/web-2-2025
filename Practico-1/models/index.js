@@ -1,14 +1,18 @@
 const { sequelize } = require("../config/db.config");
 
-const burger = require("./burger")(sequelize);
+const Burger = require("./burger")(sequelize);
 const Restaurant = require("./restaurant")(sequelize);
+const Rating = require("./rating")(sequelize);
 
-Restaurant.hasMany(burger, { foreignKey: "restaurantId", as: "burgers" });
-burger.belongsTo(Restaurant, { foreignKey: "restaurantId", as: "restaurants" });
+Restaurant.hasMany(Burger, { foreignKey: "restaurantId", as: "burgers" });
+Burger.belongsTo(Restaurant, { foreignKey: "restaurantId", as: "restaurants" });
+Burger.hasMany(Rating, { foreignKey: 'burgerId' });
+Rating.belongsTo(Burger, { foreignKey: 'burgerId' });
 
 module.exports = {
-  burger,
+  Burger,
 	Restaurant,
+	Rating,
   sequelize,
   Sequelize: sequelize.Sequelize,
 };

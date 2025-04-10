@@ -9,7 +9,21 @@ const port = 3000;
 const db = require('./config/db.config');
 const session = require('express-session');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'esta es la clave de encriptación de la sesión y puede ser cualquier texto',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+  }));
+
+app.use((req, res, next) => {
+    if (!req.session.userId) {
+      req.session.userId = crypto.randomUUID();
+    }
+    next();
+  });
+
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.set('view engine', 'ejs');
