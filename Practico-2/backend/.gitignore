@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# SQLite database (generalmente el archivo de base de datos SQLite)
+*.sqlite
+*.sqlite3
+
+# Sequelize
+/sequelize-dump/
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# npm package manager logs
+npm-debug.log*
