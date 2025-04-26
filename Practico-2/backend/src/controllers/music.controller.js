@@ -12,7 +12,7 @@ export const createMusic = async (req, res) => {
     const music = await Music.create({ title, mp3FilePath });
     res.status(201).json(mapMusic(music));
   } catch (error) {
-    res.status(500).json({ error: 'Error creating music' });
+    res.status(500).json({ error: 'Error creating music', message: error.message });
   }
 };
 
@@ -21,7 +21,7 @@ export const getAllMusic = async (req, res) => {
     const musics = await Music.findAll();
     res.json(musics.map(mapMusic));
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching musics' });
+    res.status(500).json({ error: 'Error fetching musics', message: error.message });
   }
 };
 
@@ -32,7 +32,7 @@ export const getMusicById = async (req, res) => {
     if (!music) return res.status(404).json({ error: 'Music not found' });
     res.json(mapMusic(music));
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching music' });
+    res.status(500).json({ error: 'Error fetching music', message: error.message });
   }
 };
 
@@ -46,7 +46,7 @@ export const updateMusic = async (req, res) => {
     await music.update({ title, mp3FilePath });
     res.json(mapMusic(music));
   } catch (error) {
-    res.status(500).json({ error: 'Error updating music' });
+    res.status(500).json({ error: 'Error updating music', message: error.message });
   }
 };
 
@@ -59,6 +59,6 @@ export const deleteMusic = async (req, res) => {
     await music.destroy();
     res.json({ message: 'Music deleted' });
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting music' });
+    res.status(500).json({ error: 'Error deleting music', message: error.message });
   }
 };

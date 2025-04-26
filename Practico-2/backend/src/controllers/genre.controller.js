@@ -24,9 +24,8 @@ export const getAllGenres = async (req, res) => {
   try {
     const genres = await Genre.findAll();
     res.json(genres.map(mapGenre));
-    // eslint-disable-next-line no-unused-vars
-  } catch (_error) {
-    res.status(500).json({ error: 'Error fetching genres' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching genres', message: error.message });
   }
 };
 
@@ -36,9 +35,8 @@ export const getGenreById = async (req, res) => {
     const genre = await Genre.findByPk(id);
     if (!genre) return res.status(404).json({ error: 'Genre not found' });
     res.json(mapGenre(genre));
-    // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching genre' });
+    res.status(500).json({ error: 'Error fetching genre', message: error.message });
   }
 };
 
@@ -51,9 +49,8 @@ export const updateGenre = async (req, res) => {
 
     await genre.update({ name, imagePath });
     res.json(mapGenre(genre));
-    // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    res.status(500).json({ error: 'Error updating genre' });
+    res.status(500).json({ error: 'Error updating genre', message: error.message });
   }
 };
 
@@ -65,8 +62,7 @@ export const deleteGenre = async (req, res) => {
 
     await genre.destroy();
     res.json({ message: 'Genre deleted' });
-    // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting genre' });
+    res.status(500).json({ error: 'Error deleting genre', message: error.message });
   }
 };
