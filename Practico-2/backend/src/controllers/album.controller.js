@@ -1,4 +1,4 @@
-import Album from '../models/Album.js';
+import { Album } from '../models/index.js';
 
 const mapAlbum = (album) => ({
   id: album.id,

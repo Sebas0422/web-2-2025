@@ -1,4 +1,4 @@
-import { Artist } from '../models/Artist.js';
+import { Artist } from '../models/index.js';
 
 const mapArtist = (artist) => ({
   id: artist.id,

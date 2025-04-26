@@ -1,4 +1,4 @@
-import Music from '../models/Music.js';
+import { Music } from '../models/index.js';
 
 const mapMusic = (music) => ({
   id: music.id,
