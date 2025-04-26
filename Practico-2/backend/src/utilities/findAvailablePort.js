@@ -14,10 +14,10 @@ export const findAvailablePort = (desiredPort) => {
     server.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
         console.log(`Puerto ${desiredPort} está ocupado, buscando otro...`);
-        findAvailablePort(0).then(port => resolve(port))
+        findAvailablePort(0).then((port) => resolve(port));
       } else {
         reject(err);
       }
     });
   });
-}
+};
