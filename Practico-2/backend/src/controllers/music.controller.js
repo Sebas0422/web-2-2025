@@ -16,7 +16,7 @@ export const createMusic = async (req, res) => {
   }
 };
 
-export const getAllMusic = async (req, res) => {
+export const getAllMusics = async (req, res) => {
   try {
     const musics = await Music.findAll();
     res.json(musics.map(mapMusic));
