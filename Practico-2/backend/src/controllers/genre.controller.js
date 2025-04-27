@@ -23,7 +23,7 @@ export const createGenre = async (req, res) => {
 export const getAllGenres = async (req, res) => {
   try {
     const genres = await Genre.findAll();
-    res.json(genres.map(mapGenre));
+    res.status(200).json(genres.map(mapGenre));
   } catch (error) {
     res.status(500).json({ error: 'Error fetching genres', message: error.message });
   }
