@@ -26,9 +26,9 @@ export const ListGenre = () => {
       <h1 className="text-center mb-4">List of Genres</h1>
       <ListGroup>
         {genres.map((genre) => (
-          <Link to={`/gerns/${genre.id}`} key={genre.id} className="text-decoration-none">
-            <ListGroup.Item key={genre.id} className="mb-3">
-              <Card style={{ width: '18rem' }}>
+          <ListGroup.Item key={genre.id} className="mb-3">
+            <Card style={{ width: '18rem' }}>
+              <Link to={'/gerns/' + genre.id} className="text-decoration-none text-dark">
                 <Card.Img 
                   variant="top" 
                   src={genre.imagePath || 'https://via.placeholder.com/150'} 
@@ -38,9 +38,9 @@ export const ListGenre = () => {
                   <Card.Title>{genre.name}</Card.Title>
                   <Card.Text>Explore the world of {genre.name} genres!</Card.Text>
                 </Card.Body>
-              </Card>
-            </ListGroup.Item>
-          </Link>
+              </Link>
+            </Card>
+          </ListGroup.Item>
         ))}
       </ListGroup>
     </div>

@@ -5,7 +5,7 @@ export const NavMenuBar = () => {
   return (
     <Navbar bg="dark" data-bs-theme="dark" expand="lg">
       <Container>
-        <Navbar.Brand as={NavLink} to="/">Proyecto</Navbar.Brand>
+        <Navbar.Brand as={NavLink} to="/">Practico II</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
@@ -17,13 +17,13 @@ export const NavMenuBar = () => {
             >
               Home
             </Nav.Link>
-            <NavDropdown title="Personas" id="basic-nav-dropdown">
+            <NavDropdown title="Musicas" id="basic-nav-dropdown">
               <NavDropdown.Item
                 as={NavLink}
                 to="/personas/create"
                 className={({ isActive }) => isActive ? "dropdown-item active" : "dropdown-item"}
               >
-                Crear Persona
+                Musicas
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item
