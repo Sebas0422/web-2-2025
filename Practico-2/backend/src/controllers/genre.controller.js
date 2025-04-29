@@ -1,10 +1,5 @@
-import { Genre } from '../models/index.js';
-
-const mapGenre = (genre) => ({
-  id: genre.id,
-  name: genre.name,
-  imagePath: genre.imagePath,
-});
+import { Artist, Genre } from '../models/index.js';
+import { mapGenre } from '../utilities/mapModels.js';
 
 export const createGenre = async (req, res) => {
   try {
@@ -32,9 +27,17 @@ export const getAllGenres = async (req, res) => {
 export const getGenreById = async (req, res) => {
   try {
     const { id } = req.params;
-    const genre = await Genre.findByPk(id);
+    const genre = await Genre.findByPk(id, {
+      include: [
+        {
+          model: Artist,
+          as: 'artists',
+          attributes: ['id', 'name', 'photoPath'],
+        },
+      ],
+    });
     if (!genre) return res.status(404).json({ error: 'Genre not found' });
-    res.json(mapGenre(genre));
+    res.json(mapGenre(genre, true));
   } catch (error) {
     res.status(500).json({ error: 'Error fetching genre', message: error.message });
   }

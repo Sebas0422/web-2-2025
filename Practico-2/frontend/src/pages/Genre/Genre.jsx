@@ -1,53 +1,48 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetGenreById } from "../../hook/useGenre";
-import { Container, Row, Col, Card, Spinner, Alert, Button } from "react-bootstrap";
+import { Alert, Card, Col, Spinner, Container } from "react-bootstrap";
 
-const Genre = () => {
+const Genre = ({genre: genreProp}) => {
+  const shouldFetch = !genreProp;
   const { id } = useParams();
-  const { genre, loading, error } = useGetGenreById(id);
+  const { genre: genreData, loading, error } = useGetGenreById({ id, enable: shouldFetch });
+  const genre = genreProp || genreData;
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center mt-5">
+      <Container className="d-flex justify-content-center mt-5">
         <Spinner animation="border" variant="primary" />
-      </div>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Alert variant="danger" className="mt-5">
-        <strong>Error:</strong> {error}
-      </Alert>
+      <Container className="mt-5">
+        <Alert variant="danger">
+          Error: {error}
+        </Alert>
+      </Container>
     );
   }
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <Card className="shadow-lg">
-            <Card.Body>
-              <Card.Title className="text-center mb-4">{genre.name}</Card.Title>
-              <Card.Img
-                variant="top"
-                src={genre.imagePath || "https://via.placeholder.com/150"}
-                alt={genre.name}
-                className="img-fluid rounded mx-auto d-block mb-4"
-              />
-              <Card.Text className="text-center lead">
-                Explore the world of <strong>{genre.name}</strong> genres!
-              </Card.Text>
-              <div className="d-flex justify-content-center">
-                <Button href="/" variant="primary" className="mt-3">
-                  Back to Genres
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+    <Col key={genre.id} xs={12} sm={6} md={4} lg={3}>
+      <Card className="h-100 shadow-sm">
+        <Link to={`/gerns/${genre.id}`} className="text-decoration-none text-dark">
+          <Card.Img 
+            variant="top" 
+            src={genre.imagePath || 'https://via.placeholder.com/150'}
+            alt={genre.name}
+            style={{ height: '200px', objectFit: 'cover' }}
+          />
+          <Card.Body>
+            <Card.Title>{genre.name}</Card.Title>
+            <Card.Text>Explore the world of {genre.name} genres!</Card.Text>
+          </Card.Body>
+        </Link>
+      </Card>
+  </Col>
   );
 };
 

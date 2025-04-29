@@ -9,8 +9,8 @@ const Artist = defineArtist(sequelize);
 const Album = defineAlbum(sequelize);
 const Music = defineMusic(sequelize);
 
-Genre.hasMany(Artist, { foreignKey: 'genreId' });
-Artist.belongsTo(Genre, { foreignKey: 'genreId' });
+Genre.hasMany(Artist, { foreignKey: 'genreId', as: 'artists' });
+Artist.belongsTo(Genre, { foreignKey: 'genreId', as: 'genre' });
 
 Artist.hasMany(Album, { foreignKey: 'artistId' });
 Album.belongsTo(Artist, { foreignKey: 'artistId' });

@@ -24,12 +24,13 @@ export const useGetAllGenres = () => {
   return { genres, loading, error };
 };
 
-export const useGetGenreById = (id) => {
+export const useGetGenreById = ({id, enable = true} = {}) => {
   const [genre, setGenre] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enable);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!enable) return;
     const fetchGenre = async () => {
       try {
         const data = await getGenreById(id);
@@ -42,7 +43,7 @@ export const useGetGenreById = (id) => {
     };
 
     fetchGenre();
-  }, [id]);
+  }, [id, enable]);
 
   return { genre, loading, error };
 };
