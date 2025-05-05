@@ -26,7 +26,7 @@ export const getGenreById = async (id) => {
       throw new Error('Error fetching genre by ID');
     }
     const data = await response.json();
-    return new Genre({id: data.id, name: data.name, imagePath: data.imagePath || ''});
+    return new Genre({id: data.id, name: data.name, imagePath: data.imagePath || '', artists: data.artists});
   } catch (error) {
     console.error('Error in getGenreById:', error);
     throw error;

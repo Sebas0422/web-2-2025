@@ -1,17 +1,11 @@
 import { useGetAllGenres } from '../../hook/useGenre';
-import { Container, Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Spinner, Alert } from 'react-bootstrap';
 import Genre from './Genre';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 
 export const ListGenre = () => {
-  const { genres, loading, error, refetch } = useGetAllGenres();
-  const navigate = useNavigate();
+  const { genres, loading, error} = useGetAllGenres();
+  console.log(genres);
   const shouldButtons = true;
-  
-  useEffect(() => {
-    refetch();
-  }, [navigate]);
 
 
   if (loading) {

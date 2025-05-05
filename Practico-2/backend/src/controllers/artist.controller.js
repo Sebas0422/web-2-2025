@@ -3,13 +3,20 @@ import { Artist } from '../models/index.js';
 const mapArtist = (artist) => ({
   id: artist.id,
   name: artist.name,
-  image: artist.image,
+  image: artist.photoPath,
+  genreId: artist.genreId,
 });
 
 export const createArtist = async (req, res) => {
   try {
-    const { name, image } = req.body;
-    const artist = await Artist.create({ name, image });
+    const { name, photoPath, genreId } = req.body;
+
+    if (!name || !photoPath || !genreId) {
+      return res.status(400).json({ error: 'Missing required fields: name, photoPath, genreId' });
+    }
+
+    const artist = await Artist.create({ name, photoPath, genreId });
+
     res.status(201).json(mapArtist(artist));
   } catch (error) {
     res.status(500).json({ error: 'Error creating artist', message: error.message });

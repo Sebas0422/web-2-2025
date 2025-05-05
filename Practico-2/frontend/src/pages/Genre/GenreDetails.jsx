@@ -16,7 +16,7 @@ export const GenreDetails = () => {
     if (genre && genre.imagePath) {
       const img = new Image();
       img.crossOrigin = "Anonymous";
-      img.src = `https://api.allorigins.win/raw?url=${genre.imagePath}`;
+      img.src = `${API_URL}${genre.imagePath}`;
 
       img.onload = () => {
         const colorThief = new ColorThief();
@@ -43,6 +43,7 @@ export const GenreDetails = () => {
       </Container>
     );
   }
+  console.log('Genero seleccionado',genre);
 
   return (
     <div className="genre-details">
