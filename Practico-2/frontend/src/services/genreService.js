@@ -33,3 +33,28 @@ export const getGenreById = async (id) => {
   }
 };
 
+export const updateGenre = async ({id, name, imageFile}) => {
+  try{
+    const formData = new FormData();
+    formData.append('name', name);
+    if (imageFile) {
+      formData.append('imageFile', imageFile);
+    }
+
+    console.log('body', formData);
+    const response = await fetch(`${API_URL_GENRES}/${id}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Error updating genre');
+    }
+
+    const data = await response.json();
+    return new Genre({id: data.id, name: data.name, imagePath: data.imagePath || ''});
+  }catch (error) {
+    console.error('Error in updateGenre:', error);
+    throw error;
+  }
+}

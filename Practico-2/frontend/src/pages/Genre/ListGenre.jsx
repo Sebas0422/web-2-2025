@@ -1,10 +1,18 @@
 import { useGetAllGenres } from '../../hook/useGenre';
 import { Container, Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 import Genre from './Genre';
-import { Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export const ListGenre = () => {
-  const { genres, loading, error } = useGetAllGenres();
+  const { genres, loading, error, refetch } = useGetAllGenres();
+  const navigate = useNavigate();
+  const shouldButtons = true;
+  
+  useEffect(() => {
+    refetch();
+  }, [navigate]);
+
 
   if (loading) {
     return (
@@ -29,7 +37,7 @@ export const ListGenre = () => {
       <h1 className="text-center mb-4">List of Genres</h1>
       <Row className="g-4">
         {genres.map((genre) => (
-          <Genre key={genre.id} genre={genre} />
+          <Genre key={genre.id} genre={genre} shouldButtons={shouldButtons}/>
         ))}
       </Row>
     </Container>

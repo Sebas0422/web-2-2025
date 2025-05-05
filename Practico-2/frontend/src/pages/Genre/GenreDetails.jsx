@@ -6,7 +6,7 @@ import ColorThief from 'colorthief';
 import { Artist } from "../Artist/Artist";
 
 import '../../genre.css';
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export const GenreDetails = () => {
   const { id } = useParams();
   const { genre, loading, error } = useGetGenreById({ id });
@@ -54,7 +54,7 @@ export const GenreDetails = () => {
           <Row className="align-items-center">
             <Col xs={12} md={4} className="d-flex justify-content-center">
               <img
-                src={genre.imagePath}
+                src={`${API_URL}${genre.imagePath}`}
                 alt={genre.name}
                 className="genre-image"
               />
@@ -67,22 +67,16 @@ export const GenreDetails = () => {
       </div>
 
       <Container className="genre-artists">
+        {genre.artists.length === 0 ? (
+          <Alert variant="info" className="mt-4 text-center">
+            No artists found for this genre.
+          </Alert>
+        ):(
         <h3 className="genre-artists-title">Artists:</h3>
+        )}
         <Row>
           {genre.artists.map((artist) => (
-            <Col key={artist.id} xs={12} sm={6} md={4} lg={3}>
-              <Card className="artist-card">
-                <Card.Img
-                  variant="top"
-                  src={artist.photoPath || 'https://via.placeholder.com/150'}
-                  alt={artist.name}
-                  className="artist-image"
-                />
-                <Card.Body className="artist-card-body">
-                  <Card.Title>{artist.name}</Card.Title>
-                </Card.Body>
-              </Card>
-            </Col>
+            <Artist artist={artist}/>
           ))}
         </Row>
       </Container>

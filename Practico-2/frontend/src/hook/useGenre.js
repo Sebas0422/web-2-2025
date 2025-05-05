@@ -1,27 +1,32 @@
 import { useEffect, useState } from 'react';
-import { getAllGenres, getGenreById} from '../services/genreService';
+import { getAllGenres, getGenreById, updateGenre} from '../services/genreService';
 
 export const useGetAllGenres = () => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const data = await getAllGenres();
-        setGenres(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchGenres = async () => {
+    try {
+      const data = await getAllGenres();
+      setGenres(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchGenres();
   }, []);
 
-  return { genres, loading, error };
+  const refetch = () => {
+    setLoading(true);
+    fetchGenres();
+  };
+
+  return { genres, loading, error, refetch };
 };
 
 export const useGetGenreById = ({id, enable = true} = {}) => {
@@ -47,3 +52,22 @@ export const useGetGenreById = ({id, enable = true} = {}) => {
 
   return { genre, loading, error };
 };
+
+export const useUpdateGenre = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const updateGenreId = async ({id, name, imageFile}) => {
+    setLoading(true);
+    try {
+      const data = await updateGenre({id, name, imageFile});
+      return data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateGenreId, loading, error };
+}
