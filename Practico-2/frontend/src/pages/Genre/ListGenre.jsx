@@ -4,7 +4,9 @@ import Genre from './Genre';
 
 export const ListGenre = () => {
   const { genres, loading, error} = useGetAllGenres();
-  console.log(genres);
+  console.log("Hola mundo");
+  console.warn("Cuidado");
+  console.error("Algo falló");
   const shouldButtons = true;
 
 
