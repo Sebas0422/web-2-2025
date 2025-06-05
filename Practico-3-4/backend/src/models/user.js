@@ -18,6 +18,18 @@ const User = (sequelize) =>
         type: DataTypes.STRING,
         allowNull: false,
       },
+      permissions: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '[]',
+        get() {
+          const raw = this.getDataValue('permissions');
+          return raw ? JSON.parse(raw) : [];
+        },
+        set(value) {
+          this.setDataValue('permissions', JSON.stringify(value));
+        },
+      },
     },
     {
       timestamps: true,

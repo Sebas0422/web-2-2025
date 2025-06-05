@@ -19,11 +19,17 @@ export const login = async (req, res) => {
     }
 
     const authToken = generateAuthToken(user);
-    const token = await AuthToken.create({
-      userId: user.id,
-      token: authToken,
-    });
-    res.status(200).json({ message: 'Login exitoso', token });
+    let token = await AuthToken.findOne({ where: { userId: user.id } });
+    if (token) {
+      token.token = authToken;
+      await token.save();
+    }else{
+      token = await AuthToken.create({
+        userId: user.id,
+        token: authToken,
+      });
+    }
+    res.status(200).json({ message: 'Login exitoso', token: token.token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -51,7 +57,7 @@ export const register = async (req, res) => {
       token: authToken,
     });
 
-    res.status(201).json({ message: 'Registro exitoso', token });
+    res.status(201).json({ message: 'Registro exitoso', token: token.token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });

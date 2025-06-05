@@ -1,16 +1,37 @@
+import { login } from "../../services/authService";
+
 export default function Login() {
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const loginUser = {
+      email: formData.get('email'),
+      password: formData.get('password'),
+    };
+
+    await login(loginUser)
+      .then(response => {
+        console.log('Inicio de sesión exitoso:', response);
+        localStorage.setItem('token', response.data.token);
+      })
+      .catch(error => {
+        console.error('Error al iniciar sesión:', error);
+      });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Iniciar Sesión</h2>
         
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="usuario" className="block text-sm font-medium text-gray-700">Usuario</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="text"
-              id="usuario"
-              name="usuario"
+              id="email"
+              name="email"
               className="mt-1 w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
