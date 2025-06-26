@@ -1,6 +1,9 @@
-import { login } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -9,15 +12,8 @@ export default function Login() {
       email: formData.get('email'),
       password: formData.get('password'),
     };
-
-    await login(loginUser)
-      .then(response => {
-        console.log('Inicio de sesión exitoso:', response);
-        localStorage.setItem('token', response.data.token);
-      })
-      .catch(error => {
-        console.error('Error al iniciar sesión:', error);
-      });
+    login(loginUser)
+    navigate('/admin');
   };
 
   return (

@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
-import { User, AuthToken } from '../models/index.js';
+import models from '../models/index.js';
 import { generateAuthToken } from '../utilities/auth.utils.js';
 
+const { User, AuthToken } = models;
 export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -23,7 +24,7 @@ export const login = async (req, res) => {
     if (token) {
       token.token = authToken;
       await token.save();
-    }else{
+    } else {
       token = await AuthToken.create({
         userId: user.id,
         token: authToken,
@@ -34,7 +35,7 @@ export const login = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
-}
+};
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -65,7 +66,7 @@ export const register = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.params;
   if (!userId) {
     return res.status(400).json({ error: 'ID de usuario es requerido' });
   }
@@ -82,4 +83,4 @@ export const logout = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
-}
+};

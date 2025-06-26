@@ -22,3 +22,19 @@ export const login = async (user) => {
     throw error;
   }
 }
+
+export const logout = () => {
+  try{
+    const response = fetch(`${API_URL_AUTH}/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Error al cerrar sesión');
+    }
+  }catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+}
