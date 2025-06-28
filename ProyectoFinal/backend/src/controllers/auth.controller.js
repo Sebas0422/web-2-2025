@@ -39,8 +39,8 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { name, email, password, permissions } = req.body;
+  if (!name || !email || !password || !permissions) {
     return res.status(400).json({ error: 'Nombre, email y contraseña son requeridos' });
   }
 
@@ -51,12 +51,13 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password: hashedPassword, permissions });
 
     const authToken = generateAuthToken(newUser);
     const token = await AuthToken.create({
       userId: newUser.id,
       token: authToken,
+      permissions: newUser.permissions,
     });
 
     res.status(201).json({ message: 'Registro exitoso', token: token.token });
@@ -80,6 +81,33 @@ export const logout = async (req, res) => {
 
     await token.destroy();
     res.status(200).json({ message: 'Logout exitoso' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+export const getUserProfileByToken = async (req, res) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+  if (!token) {
+    return res.status(400).json({ error: 'Token es requerido' });
+  }
+  try {
+    const authToken = await AuthToken.findOne({ where: { token } });
+    if (!authToken) {
+      return res.status(404).json({ error: 'Token no encontrado' });
+    }
+
+    const user = await User.findByPk(authToken.userId, {
+      attributes: ['email', 'permissions'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });

@@ -22,6 +22,21 @@ const AuthToken = (sequelize) =>
         allowNull: false,
         unique: true,
       },
+      permissions: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        get() {
+          const raw = this.getDataValue('permissions');
+          try {
+            return raw ? JSON.parse(raw) : null;
+          } catch {
+            return null;
+          }
+        },
+        set(value) {
+          this.setDataValue('permissions', JSON.stringify(value));
+        },
+      },
     },
     {
       tableName: 'auth_tokens',
