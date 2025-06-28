@@ -11,6 +11,7 @@ import defineNature from './Nature.js';
 import defineAbility from './Ability.js';
 import definePokemonMove from './PokemonMove.js';
 import defineType from './Type.js';
+import { EntityTypes } from '../types/EntityTypes.js';
 
 const models = {
   User: defineUser(sequelize),
@@ -29,112 +30,112 @@ const models = {
 
 models.AuthToken.belongsTo(models.User, {
   foreignKey: 'userId',
-  as: 'users',
+  as: EntityTypes.Users,
 });
 
 models.Team.belongsTo(models.User, {
   foreignKey: 'userId',
-  as: 'users',
+  as: EntityTypes.UsersS,
 });
 
 models.TeamPokemon.belongsTo(models.Team, {
   foreignKey: 'teamId',
-  as: 'teams',
+  as: EntityTypes.Teams,
 });
 
 models.TeamPokemon.belongsTo(models.Pokemon, {
   foreignKey: 'pokemonId',
-  as: 'pokemons',
+  as: EntityTypes.Pokemons,
 });
 
 models.TeamPokemon.belongsTo(models.Item, {
   foreignKey: 'itemId',
-  as: 'items',
+  as: EntityTypes.Items,
 });
 
 models.TeamPokemon.hasMany(models.TeamPokemonMove, {
   foreignKey: 'teamPokemonId',
-  as: 'moves',
+  as: EntityTypes.TeamPokemonMoves,
 });
 
 models.TeamPokemon.belongsTo(models.Nature, {
   foreignKey: 'natureId',
-  as: 'natures',
+  as: EntityTypes.Natures,
 });
 
 models.TeamPokemon.belongsTo(models.Ability, {
   foreignKey: 'abilityId',
-  as: 'abilities',
+  as: EntityTypes.Abilities,
 });
 
 models.Pokemon.hasMany(models.TeamPokemon, {
   foreignKey: 'pokemonId',
-  as: 'team_pokemons',
+  as: EntityTypes.TeamPokemons,
 });
 
 models.Pokemon.belongsTo(models.Type, {
   foreignKey: 'typeId',
-  as: 'types',
+  as: EntityTypes.Types,
 });
 
 models.Type.hasMany(models.Pokemon, {
   foreignKey: 'typeId',
-  as: 'pokemons',
+  as: EntityTypes.Pokemons,
 });
 
 models.Move.hasMany(models.TeamPokemonMove, {
   foreignKey: 'moveId',
-  as: 'team_pokemon_moves',
+  as: EntityTypes.TeamPokemonMoves,
 });
 
 models.TeamPokemonMove.belongsTo(models.TeamPokemon, {
   foreignKey: 'teamPokemonId',
-  as: 'team_pokemons',
+  as: EntityTypes.TeamPokemons,
 });
 
 models.TeamPokemonMove.belongsTo(models.Move, {
   foreignKey: 'moveId',
-  as: 'moves',
+  as: EntityTypes.Moves,
 });
 
 models.Item.hasMany(models.TeamPokemon, {
   foreignKey: 'itemId',
-  as: 'team_pokemons',
+  as: EntityTypes.TeamPokemons,
 });
 
 models.Nature.hasMany(models.TeamPokemon, {
   foreignKey: 'natureId',
-  as: 'team_pokemons',
+  as: EntityTypes.TeamPokemons,
 });
 
 models.Ability.hasMany(models.TeamPokemon, {
   foreignKey: 'abilityId',
-  as: 'team_pokemons',
+  as: EntityTypes.TeamPokemons,
 });
 
 models.User.hasMany(models.Team, {
   foreignKey: 'userId',
-  as: 'teams',
+  as: EntityTypes.Teams,
 });
 
 models.PokemonMove.belongsTo(models.Pokemon, {
   foreignKey: 'pokemonId',
-  as: 'pokemons',
+  as: EntityTypes.Pokemons,
 });
 
 models.PokemonMove.belongsTo(models.Move, {
   foreignKey: 'moveId',
-  as: 'moves',
+  as: EntityTypes.Moves,
 });
 
 models.Pokemon.hasMany(models.PokemonMove, {
   foreignKey: 'pokemonId',
-  as: 'pokemon_moves',
+  as: EntityTypes.PokemonMoves,
 });
 
 models.Move.hasMany(models.PokemonMove, {
   foreignKey: 'moveId',
-  as: 'pokemon_moves',
+  as: EntityTypes.Moves,
 });
 
 export default models;

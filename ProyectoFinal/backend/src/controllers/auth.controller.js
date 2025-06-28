@@ -3,6 +3,7 @@ import models from '../models/index.js';
 import { generateAuthToken } from '../utilities/auth.utils.js';
 
 const { User, AuthToken } = models;
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {

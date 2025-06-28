@@ -6,6 +6,7 @@ import {
   updatePokemon,
   deletePokemon,
   addMoveToPokemon,
+  getMovesByPokemonId,
 } from '../controllers/pokemon.controller.js';
 
 export const PokemonRoutes = () => {
@@ -16,5 +17,6 @@ export const PokemonRoutes = () => {
   router.put('/:id', updatePokemon);
   router.delete('/:id', deletePokemon);
   router.post('/:id/moves', addMoveToPokemon);
+  router.get('/:id/moves', getMovesByPokemonId);
   return router;
 };

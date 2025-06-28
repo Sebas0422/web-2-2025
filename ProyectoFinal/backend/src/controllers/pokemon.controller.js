@@ -1,4 +1,5 @@
 import models from '../models/index.js';
+import { EntityTypes } from '../types/EntityTypes.js';
 const { Pokemon, Type, PokemonMove, Move } = models;
 
 export const createPokemon = async (req, res) => {
@@ -57,7 +58,7 @@ export const getAllPokemons = async (req, res) => {
     const pokemons = await Pokemon.findAll({
       include: {
         model: Type,
-        as: 'types',
+        as: EntityTypes.Types,
       },
     });
     res.status(200).json(pokemons);
@@ -74,7 +75,7 @@ export const getPokemonById = async (req, res) => {
     const pokemon = await Pokemon.findByPk(id, {
       include: {
         model: Type,
-        as: 'types',
+        as: EntityTypes.Types,
       },
     });
 
@@ -177,6 +178,29 @@ export const addMoveToPokemon = async (req, res) => {
     });
 
     res.status(201).json(newPokemonMove);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};
+
+export const getMovesByPokemonId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pokemonMoves = await PokemonMove.findAll({
+      where: { pokemonId: id },
+      include: {
+        model: Move,
+        as: EntityTypes.Moves,
+      },
+    });
+
+    if (pokemonMoves.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron movimientos para este pokemon' });
+    }
+
+    res.status(200).json(pokemonMoves);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor', message: error });
