@@ -7,9 +7,17 @@ import {
   updatePokemon,
 } from '../../services/pokemonService';
 import { PokedexContext } from './PokedexContext';
+import {
+  getItems,
+  getItemById,
+  deleteItem,
+  updateItem,
+  createItem,
+} from '../../services/itemService';
 
 export const PokedexContextProvider = ({ children }) => {
   const [pokemonList, setPokemonList] = useState([]);
+  const [itemList, setItemList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -63,15 +71,87 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
+  const loadItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getItems();
+      setItemList(data);
+    } catch (error) {
+      console.error('Error al cargar los Pokémon:', error);
+      setError('Error al cargar los Pokémon');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const addItem = useCallback(async ({ item }) => {
+    setLoading(true);
+    try {
+      const newItem = await createItem({ item });
+      setItemList((prevList) => [...prevList, newItem]);
+    } catch (error) {
+      console.error('Error al agregar el ítem:', error);
+      setError('Error al agregar el ítem');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const eliminateItem = useCallback(async (id) => {
+    setLoading(true);
+    try {
+      await deleteItem({ id });
+      setItemList((prevList) => prevList.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar el ítem:', error);
+      setError('Error al eliminar el ítem');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const modifyItem = useCallback(async ({ id, item }) => {
+    setLoading(true);
+    try {
+      const updatedItem = await updateItem({ id, item });
+      setItemList((prevList) => prevList.map((i) => (i.id === id ? updatedItem : i)));
+    } catch (error) {
+      console.error('Error al actualizar el ítem:', error);
+      setError('Error al actualizar el ítem');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const findItemById = useCallback(async ({ id }) => {
+    setLoading(true);
+    try {
+      const item = await getItemById({ id });
+      return item;
+    } catch (error) {
+      console.error('Error al obtener el ítem por ID:', error);
+      setError('Error al obtener el ítem por ID');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const value = {
     pokemonList,
-    loading,
     loadPokemon,
     addPokemon,
     eliminatePokemon,
     modifyPokemon,
     findPokemonById,
+    itemList,
+    loadItems,
+    addItem,
+    eliminateItem,
+    modifyItem,
+    findItemById,
     error,
+    loading,
   };
 
   return <PokedexContext.Provider value={value}>{children}</PokedexContext.Provider>;

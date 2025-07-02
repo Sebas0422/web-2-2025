@@ -5,7 +5,7 @@ const { Move } = models;
 export const createMove = async (req, res) => {
   const { name, type, category, power } = req.body;
 
-  if (!name || !type || !category || power === undefined) {
+  if (!name || !type || !category || !power) {
     return res.status(400).json({ error: 'Todos los campos son requeridos' });
   }
 

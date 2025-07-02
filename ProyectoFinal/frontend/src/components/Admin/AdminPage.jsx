@@ -8,7 +8,7 @@ export const AdminPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const opcionMenu = ['pokemons', 'users', 'settings', 'reports'];
+  const opcionMenu = ['pokemons', 'users', 'items', 'reports'];
 
   useEffect(() => {
     const current = location.pathname.split('/')[2];
@@ -20,8 +20,8 @@ export const AdminPage = () => {
       case 'users':
         setTitleContent('Gestión de Usuarios');
         break;
-      case 'settings':
-        setTitleContent('Configuración del Sistema');
+      case 'items':
+        setTitleContent('Configuración de Items');
         break;
       case 'reports':
         setTitleContent('Reportes y Estadísticas');
