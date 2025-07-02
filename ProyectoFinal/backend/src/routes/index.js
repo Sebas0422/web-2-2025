@@ -6,6 +6,7 @@ import { PokemonRoutes } from './pokemon.route.js';
 import { Router } from 'express';
 import { TypeRoutes } from './type.route.js';
 import { ItemRoutes } from './item.route.js';
+import { TeamRoutes } from './team.route.js';
 
 export const routes = (app) => {
   const routerApi = Router();
@@ -18,6 +19,7 @@ export const routes = (app) => {
   routerApi.use('/pokemons', PokemonRoutes());
   routerApi.use('/types', TypeRoutes());
   routerApi.use('/items', ItemRoutes());
+  routerApi.use('/teams', TeamRoutes());
 
   app.use('/api', authenticateToken, routerApi);
   app.use('/auth', routerAuth);

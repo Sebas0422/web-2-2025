@@ -136,7 +136,8 @@ export const deletePokemon = async (req, res) => {
 };
 
 export const addMoveToPokemon = async (req, res) => {
-  const { pokemonId, moveId } = req.body;
+  const { id: pokemonId } = req.params;
+  const { moveId } = req.body;
 
   if (!pokemonId || !moveId) {
     return res.status(400).json({ error: 'Pokemon ID y Move ID son requeridos' });
@@ -162,14 +163,6 @@ export const addMoveToPokemon = async (req, res) => {
 
     if (existingPokemonMove) {
       return res.status(409).json({ error: 'El movimiento ya está asociado a este pokemon' });
-    }
-
-    const numberPokemonMoves = await PokemonMove.count({
-      where: { pokemonId },
-    });
-
-    if (numberPokemonMoves >= 4) {
-      return res.status(400).json({ error: 'Un pokemon no puede tener más de 4 movimientos' });
     }
 
     const newPokemonMove = await PokemonMove.create({
@@ -201,6 +194,31 @@ export const getMovesByPokemonId = async (req, res) => {
     }
 
     res.status(200).json(pokemonMoves);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};
+
+export const removeMoveFromPokemon = async (req, res) => {
+  const { id: pokemonId } = req.params;
+  const { moveId } = req.params;
+
+  if (!pokemonId || !moveId) {
+    return res.status(400).json({ error: 'Pokemon ID y Move ID son requeridos' });
+  }
+
+  try {
+    const pokemonMove = await PokemonMove.findOne({
+      where: { pokemonId, moveId },
+    });
+
+    if (!pokemonMove) {
+      return res.status(404).json({ error: 'Movimiento no encontrado para este pokemon' });
+    }
+
+    await pokemonMove.destroy();
+    res.status(204).send();
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor', message: error });

@@ -1,4 +1,4 @@
-export const insertTypes = async (url) => {
+export const insertTypes = async (url, token) => {
   const types = [
     { name: 'Normal', color: '#A8A77A' },
     { name: 'Fuego', color: '#EE8130' },
@@ -26,7 +26,7 @@ export const insertTypes = async (url) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'authorization' : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVybWlzc2lvbnMiOltdLCJpYXQiOjE3NTA5NjI2NjQsImV4cCI6MTc1MDk2NjI2NH0.yCy6ACYoiSC6V_kzH9-hbrV98k8DTz9kMzUpTGr_JzA'
+          'authorization' : `Bearer ${token}`
         },
         body: JSON.stringify(type),
       });

@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import { EntityTypes } from '../types/EntityTypes.js';
 
 const Pokemon = (sequelize) => {
   return sequelize.define(
@@ -21,33 +22,39 @@ const Pokemon = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'types', // Name of the referenced table
-          key: 'id', // Key in the referenced table
+          model: EntityTypes.Types,
+          key: 'id',
         },
       },
       baseHp: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       baseAttack: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       baseDefense: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       baseSpAttack: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       baseSpDefense: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       baseSpeed: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
     },
     {

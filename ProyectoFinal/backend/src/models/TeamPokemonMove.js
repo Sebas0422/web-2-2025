@@ -4,6 +4,11 @@ const TeamPokemonMoves = (sequelize) => {
   return sequelize.define(
     'TeamPokemonMove',
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       teamPokemonId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -14,10 +19,6 @@ const TeamPokemonMoves = (sequelize) => {
         allowNull: false,
         references: { model: 'moves', key: 'id' },
       },
-      slot: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
     },
     {
       tableName: 'team_pokemon_moves',
@@ -25,7 +26,7 @@ const TeamPokemonMoves = (sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ['teamPokemonId', 'slot'],
+          fields: ['teamPokemonId', 'moveId'],
         },
       ],
     },

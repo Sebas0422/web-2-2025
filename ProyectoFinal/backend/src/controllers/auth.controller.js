@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import models from '../models/index.js';
 import { generateAuthToken } from '../utilities/auth.utils.js';
+import { getUserProfile } from '../utilities/getUserProfile.js';
 
 const { User, AuthToken } = models;
 
@@ -17,7 +18,7 @@ export const login = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+      return res.status(404).json({ error: 'Usuario o contraseña incorrectos' });
     }
 
     const authToken = generateAuthToken(user);
@@ -94,15 +95,7 @@ export const getUserProfileByToken = async (req, res) => {
     return res.status(400).json({ error: 'Token es requerido' });
   }
   try {
-    const authToken = await AuthToken.findOne({ where: { token } });
-    if (!authToken) {
-      return res.status(404).json({ error: 'Token no encontrado' });
-    }
-
-    const user = await User.findByPk(authToken.userId, {
-      attributes: ['email', 'permissions'],
-    });
-
+    const user = await getUserProfile({ token });
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }

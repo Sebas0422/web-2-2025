@@ -15,3 +15,13 @@ export const createType = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor', message: error });
   }
 };
+
+export const getTypes = async (req, res) => {
+  try {
+    const types = await Type.findAll();
+    res.status(200).json(types);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};

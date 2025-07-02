@@ -5,9 +5,10 @@ import { insertUsers } from './insertUsers.js';
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 export const seed = async () => {
   try {
-    await insertUsers(API_URL);
-    await insertTypes(API_URL);
-    await insertPokemons(API_URL);
+    const token = await insertUsers(API_URL);
+    console.log('Response token:', token);
+    await insertTypes(API_URL, token);
+    await insertPokemons(API_URL, token);
     console.log('✅ Datos insertados correctamente');
     process.exit(0);
   } catch (error) {

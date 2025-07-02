@@ -9,6 +9,10 @@ const User = (sequelize) =>
         primaryKey: true,
         autoIncrement: true,
       },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -24,6 +28,7 @@ const User = (sequelize) =>
         defaultValue: '[]',
         get() {
           const raw = this.getDataValue('permissions');
+          // Convierte los permiso almacenados en un Array de strings
           return raw ? JSON.parse(raw) : [];
         },
         set(value) {
