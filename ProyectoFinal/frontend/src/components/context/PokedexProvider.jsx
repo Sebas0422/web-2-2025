@@ -14,10 +14,18 @@ import {
   updateItem,
   createItem,
 } from '../../services/itemService';
+import {
+  getAllMoves,
+  getMoveById,
+  createMove,
+  updateMove,
+  deleteMove,
+} from '../../services/moveService';
 
 export const PokedexContextProvider = ({ children }) => {
   const [pokemonList, setPokemonList] = useState([]);
   const [itemList, setItemList] = useState([]);
+  const [moveList, setMoveList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -137,6 +145,76 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
+  const loadMoves = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getAllMoves();
+      setMoveList(data);
+    } catch (error) {
+      console.error('Error al cargar los movimientos:', error);
+      setError('Error al cargar los movimientos');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const addMove = useCallback(async ({ move }) => {
+    setLoading(true);
+    try {
+      const newMove = await createMove({ move });
+      setMoveList((prevList) => [...prevList, newMove]);
+    } catch (error) {
+      console.error('Error al agregar el movimiento:', error);
+      setError('Error al agregar el movimiento');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const eliminateMove = useCallback(async ({ id }) => {
+    setLoading(true);
+    try {
+      await deleteMove({ id });
+      setMoveList((prevList) => prevList.filter((move) => move.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar el movimiento:', error);
+      setError('Error al eliminar el movimiento');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const modifyMove = useCallback(async ({ id, move }) => {
+    setLoading(true);
+    try {
+      const updatedMove = await updateMove({ id, move });
+      setMoveList((prevList) => prevList.map((m) => (m.id === id ? updatedMove : m)));
+    } catch (error) {
+      console.error('Error al actualizar el movimiento:', error);
+      setError('Error al actualizar el movimiento');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const findMoveById = useCallback(
+    async ({ id }) => {
+      setLoading(true);
+      try {
+        const move = await getMoveById({ id });
+        return move;
+      } catch (error) {
+        console.error('Error al obtener el movimiento por ID:', error);
+        setError('Error al obtener el movimiento por ID');
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+
+    [],
+  );
+
   const value = {
     pokemonList,
     loadPokemon,
@@ -150,6 +228,12 @@ export const PokedexContextProvider = ({ children }) => {
     eliminateItem,
     modifyItem,
     findItemById,
+    moveList,
+    loadMoves,
+    addMove,
+    eliminateMove,
+    modifyMove,
+    findMoveById,
     error,
     loading,
   };

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { login, logout, register } from '../services/authService';
+import { login, logout, register, getUserProfileByToken } from '../services/authService';
 
 export function useAuth() {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
@@ -66,6 +66,17 @@ export function useAuth() {
     }
   };
 
+  const fetchUserProfile = useCallback(async () => {
+    if (!token) return;
+    try {
+      const userProfile = await getUserProfileByToken(token);
+      return userProfile;
+    } catch (error) {
+      console.error('Error al obtener el perfil del usuario:', error);
+      throw error;
+    }
+  }, [token]);
+
   return {
     isAuthenticated,
     permissions,
@@ -73,6 +84,7 @@ export function useAuth() {
     login: loginUser,
     logout: logoutUser,
     register: registerUser,
+    getUserProfile: fetchUserProfile,
     token,
   };
 }

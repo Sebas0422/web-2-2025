@@ -9,6 +9,11 @@ import Login from './components/auth/Login';
 import { PokemonMove } from './components/Pokemon/PokemonMove';
 import { ItemForm } from './components/Items/ItemForm';
 import { ItemList } from './components/Items/ItemList';
+import { MoveList } from './components/Move/MoveList';
+import { MoveForm } from './components/Move/MoveForm';
+import { UserList } from './components/User/UserList';
+import { UserForm } from './components/User/UserForm';
+import { TeamList } from './components/Team/TeamList';
 
 export const AppRouter = () => {
   return (
@@ -29,11 +34,15 @@ export const AppRouter = () => {
         <Route path="pokemons/edit/:id" element={<PokemonForm />} />
         <Route path="pokemons/:id/movements" element={<PokemonMove />} />
         <Route path="pokemons/create" element={<PokemonForm />} />
-        <Route path="users" element={<p>Gestión de Usuarios</p>} />
+        <Route path="users" element={<UserList />} />
+        <Route path="users/edit/:id" element={<UserForm />} />
+        <Route path="users/create" element={<UserForm />} />
         <Route path="items" element={<ItemList />} />
         <Route path="items/edit/:id" element={<ItemForm />} />
         <Route path="items/create" element={<ItemForm />} />
-        <Route path="reports" element={<p>Reportes y estadísticas</p>} />
+        <Route path="moves" element={<MoveList />} />
+        <Route path="moves/edit/:id" element={<MoveForm />} />
+        <Route path="moves/create" element={<MoveForm />} />
       </Route>
       <Route
         path="/"
@@ -42,7 +51,9 @@ export const AppRouter = () => {
             <UserPage />
           </RequirePermissions>
         }
-      />
+      >
+        <Route path="/teams" element={<TeamList />} />
+      </Route>
 
       <Route path="/unauthorized" element={<h1>No autorizado</h1>} />
 

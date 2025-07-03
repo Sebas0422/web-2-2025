@@ -1,4 +1,4 @@
-import { getAuthHeaders } from '../components/Utilities/getAuthHeaders';
+import { getAuthHeaders } from '../utilities/getAuthHeaders';
 
 const API_URL_POKEMON = `${import.meta.env.VITE_API_URL}/api/pokemons`;
 export const createPokemon = async ({ pokemon }) => {
@@ -84,7 +84,12 @@ export const deletePokemon = async ({ id }) => {
     });
 
     if (!response.ok) {
-      throw new Error('Error al eliminar el Pokemon');
+      const errorData = await response.json();
+      if (errorData.error) {
+        throw new Error(errorData.error);
+      } else {
+        throw new Error('Error al eliminar el Pokemon');
+      }
     }
 
     return { message: 'Pokemon eliminado correctamente' };
@@ -121,12 +126,18 @@ export const addMoveToPokemon = async ({ id, moveId }) => {
     });
 
     if (!response.ok) {
-      throw new Error('Error al asignar el movimiento al Pokemon');
+      return await response.json().then((error) => {
+        if (error.error) {
+          throw new Error(error.error);
+        } else {
+          throw new Error('Error al asignar el movimiento al Pokemon');
+        }
+      });
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error al asignar el movimiento al Pokemon:', error);
+    console.log('Error al asignar el movimiento al Pokemon:', error);
     throw error;
   }
 };

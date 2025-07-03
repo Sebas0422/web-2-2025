@@ -33,7 +33,7 @@ export const AssignMoveToPokemonModal = ({ pokemonId, onClose, onSuccess }) => {
       onClose();
     } catch (err) {
       console.error('Error al asignar movimiento:', err);
-      setError('Error al asignar el movimiento');
+      setError('Error al asignar el movimiento: ' + (err.message || 'Error desconocido'));
     } finally {
       setLoading(false);
     }

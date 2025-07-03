@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu } from 'lucide-react';
+import { ProfileMenu } from '../components/User/ProfileMenu';
 
 export const SidebarWithToggle = ({
   selectedMenu,
@@ -28,8 +29,8 @@ export const SidebarWithToggle = ({
   }, [sidebarOpen]);
 
   return (
-    <div className="flex h-screen overflow-auto">
-      {/* Sidebar que empuja el contenido */}
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
       <aside
         ref={sidebarRef}
         className={`transition-all duration-300 bg-gray-800 text-white space-y-2 p-4 ${
@@ -43,12 +44,10 @@ export const SidebarWithToggle = ({
               {opcionMenu.map((item) => (
                 <li
                   key={item}
-                  className={`cursor-pointer p-2 rounded ${
+                  className={`cursor-pointer p-2 rounded hover:bg-gray-700 ${
                     selectedMenu === item ? 'bg-gray-700' : ''
                   }`}
-                  onClick={() => {
-                    setSelectedMenu(item);
-                  }}
+                  onClick={() => setSelectedMenu(item)}
                 >
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </li>
@@ -58,7 +57,7 @@ export const SidebarWithToggle = ({
         )}
       </aside>
 
-      <main className="flex-1 bg-gray-100 p-6 relative transition-all duration-300">
+      <main className="flex-1 bg-gray-100 p-6 relative overflow-auto">
         {!sidebarOpen && (
           <button
             onClick={() => setSidebarOpen(true)}
@@ -68,7 +67,12 @@ export const SidebarWithToggle = ({
           </button>
         )}
 
-        <h1 className="text-2xl font-bold mb-4 mt-4">{titleContent}</h1>
+        <div className="flex justify-between items-center mb-6 mt-4">
+          <h1 className="text-2xl font-bold">{titleContent}</h1>
+          <ProfileMenu />
+        </div>
+
+        {/* Render contenido */}
         <div className="bg-white p-4 rounded shadow">{opcionRender()}</div>
       </main>
     </div>

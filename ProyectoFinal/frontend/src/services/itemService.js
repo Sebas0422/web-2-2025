@@ -1,4 +1,4 @@
-import { getAuthHeaders } from '../components/Utilities/getAuthHeaders';
+import { getAuthHeaders } from '../utilities/getAuthHeaders';
 
 const API_URL_ITEMS = `${import.meta.env.VITE_API_URL}/api/items`;
 
@@ -64,5 +64,5 @@ export const deleteItem = async ({ id }) => {
     throw new Error('Error al eliminar el ítem');
   }
 
-  return response.status === 204; // Devuelve true si la eliminación fue exitosa
+  return response.status === 204;
 };

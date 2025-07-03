@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SidebarWithToggle } from '../Utilities/SidebarMenu';
+import { SidebarWithToggle } from '../../utilities/SidebarMenu';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export const AdminPage = () => {
@@ -8,7 +8,7 @@ export const AdminPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const opcionMenu = ['pokemons', 'users', 'items', 'reports'];
+  const opcionMenu = ['pokemons', 'users', 'items', 'moves'];
 
   useEffect(() => {
     const current = location.pathname.split('/')[2];
@@ -23,8 +23,8 @@ export const AdminPage = () => {
       case 'items':
         setTitleContent('Configuración de Items');
         break;
-      case 'reports':
-        setTitleContent('Reportes y Estadísticas');
+      case 'moves':
+        setTitleContent('Configuración de Movimientos');
         break;
       default:
         setTitleContent('Selecciona una opción');

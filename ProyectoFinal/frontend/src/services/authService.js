@@ -11,7 +11,12 @@ export const login = async (user) => {
     });
 
     if (!response.ok) {
-      throw new Error('Error en la autenticación');
+      const errorData = await response.json();
+      if (errorData.error) {
+        throw new Error(errorData.error);
+      } else {
+        throw new Error('Error en la autenticación');
+      }
     }
 
     const data = await response.json();
@@ -31,7 +36,12 @@ export const logout = async () => {
       },
     });
     if (!response.ok) {
-      throw new Error('Error al cerrar sesión');
+      const errorData = await response.json();
+      if (errorData.error) {
+        throw new Error(errorData.error);
+      } else {
+        throw new Error('Error al cerrar sesión');
+      }
     }
   } catch (error) {
     console.error('Error al cerrar sesión:', error);
@@ -49,13 +59,45 @@ export const register = async (user) => {
     });
 
     if (!response.ok) {
-      throw new Error('Error al registrar usuario');
+      const errorData = await response.json();
+      if (errorData.error) {
+        throw new Error(errorData.error);
+      } else {
+        throw new Error('Error al registrar usuario');
+      }
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error al registrar usuario:', error);
+    throw error;
+  }
+};
+
+export const getUserProfileByToken = async (token) => {
+  try {
+    const response = await fetch(`${API_URL_AUTH}/profile`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.error) {
+        throw new Error(errorData.error);
+      } else {
+        throw new Error('Error al obtener el perfil de usuario');
+      }
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error al obtener el perfil de usuario:', error);
     throw error;
   }
 };

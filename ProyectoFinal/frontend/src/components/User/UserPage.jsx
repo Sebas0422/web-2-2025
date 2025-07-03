@@ -1,45 +1,39 @@
 import { useState, useEffect } from 'react';
-import { SidebarWithToggle } from '../Utilities/SidebarMenu';
-import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { SidebarWithToggle } from '../../utilities/SidebarMenu';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export const UserPage = () => {
+  const [selectedMenu, setSelectedMenu] = useState('');
+  const [titleContent, setTitleContent] = useState('Selecciona una opción');
+  const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, loading } = useAuth();
 
-  const [selectedMenu, setSelectedMenu] = useState('dashboard');
-  const opcionMenu = ['dashboard', 'profile', 'settings'];
+  const opcionMenu = ['teams'];
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      console.log('UserPage: User not authenticated, navigating to login');
-      navigate('/login');
-    }
-  }, [isAuthenticated, loading, navigate]);
-
-  const opcionRender = () => {
-    switch (selectedMenu) {
-      case 'dashboard':
-        return <p>Este es el Dashboard del Usuario</p>;
-      case 'profile':
-        return <p>Perfil del Usuario</p>;
-      case 'settings':
-        return <p>Configuración de la Cuenta</p>;
+    const current = location.pathname.split('/')[1];
+    setSelectedMenu(current || '');
+    console.log('Current path:', current);
+    switch (current) {
+      case 'teams':
+        setTitleContent('Gestión de Teams');
+        break;
       default:
-        return <p>Selecciona una opción</p>;
+        setTitleContent('Selecciona una opción');
     }
+  }, [location.pathname]);
+
+  const handleMenuClick = (menu) => {
+    navigate(`/${menu}`);
   };
-
-  if (loading) return <p>Cargando...</p>; // Mostrar algo mientras verifica
-
-  if (!isAuthenticated) return null; // Mientras navega fuera, no mostrar nada
 
   return (
     <SidebarWithToggle
       selectedMenu={selectedMenu}
-      setSelectedMenu={setSelectedMenu}
-      opcionRender={opcionRender}
+      setSelectedMenu={handleMenuClick}
       opcionMenu={opcionMenu}
+      titleContent={titleContent}
+      opcionRender={() => <Outlet />}
     />
   );
 };

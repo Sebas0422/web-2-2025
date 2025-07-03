@@ -46,6 +46,44 @@ export const getTeams = async (req, res) => {
   }
 };
 
+export const getPokemonsByTeamId = async (req, res) => {
+  const { id: teamId } = req.params;
+  if (!teamId) {
+    return res.status(400).json({ error: 'teamId es requerido' });
+  }
+  try {
+    const teamPokemons = await TeamPokemon.findAll({
+      where: { teamId },
+      include: [
+        {
+          model: models.Pokemon,
+          as: 'pokemon',
+          attributes: ['id', 'name', 'image'],
+        },
+        {
+          model: models.Item,
+          as: 'item',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: models.Ability,
+          as: 'ability',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: models.Nature,
+          as: 'nature',
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
+    res.status(200).json(teamPokemons);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};
+
 export const insertDetailsTeam = async (req, res) => {
   const { teamId, pokemonId } = req.body;
 
