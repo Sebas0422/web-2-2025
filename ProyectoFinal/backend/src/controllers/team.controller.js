@@ -1,4 +1,5 @@
 import models from '../models/index.js';
+import { EntityTypes } from '../types/EntityTypes.js';
 import { getUserProfile } from '../utilities/getUserProfile.js';
 
 const { Team, TeamPokemon, PokemonMove, TeamPokemonMove } = models;
@@ -57,23 +58,19 @@ export const getPokemonsByTeamId = async (req, res) => {
       include: [
         {
           model: models.Pokemon,
-          as: 'pokemon',
-          attributes: ['id', 'name', 'image'],
+          as: EntityTypes.Pokemons,
         },
         {
           model: models.Item,
-          as: 'item',
-          attributes: ['id', 'name'],
+          as: EntityTypes.Items,
         },
         {
           model: models.Ability,
-          as: 'ability',
-          attributes: ['id', 'name'],
+          as: EntityTypes.Abilities,
         },
         {
           model: models.Nature,
-          as: 'nature',
-          attributes: ['id', 'name'],
+          as: EntityTypes.Natures,
         },
       ],
     });
@@ -92,6 +89,16 @@ export const insertDetailsTeam = async (req, res) => {
   }
 
   try {
+    const team = await Team.findByPk(teamId);
+    if (!team) {
+      return res.status(404).json({ error: 'Equipo no encontrado' });
+    }
+    const numberTeamPokemons = await TeamPokemon.count({
+      where: { teamId },
+    });
+    if (numberTeamPokemons >= 6) {
+      return res.status(400).json({ error: 'Un equipo no puede tener más de 6 Pokémon' });
+    }
     const teamPokemon = await TeamPokemon.create({
       teamId,
       pokemonId,

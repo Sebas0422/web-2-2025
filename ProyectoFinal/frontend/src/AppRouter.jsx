@@ -14,6 +14,8 @@ import { MoveForm } from './components/Move/MoveForm';
 import { UserList } from './components/User/UserList';
 import { UserForm } from './components/User/UserForm';
 import { TeamList } from './components/Team/TeamList';
+import { TeamPokemonList } from './components/Team/TeamPokemonList';
+import { TeamPokemonEdit } from './components/Team/TeamPokemonEdit';
 
 export const AppRouter = () => {
   return (
@@ -53,6 +55,9 @@ export const AppRouter = () => {
         }
       >
         <Route path="/teams" element={<TeamList />} />
+        <Route path="/teams/pokemons/create" element={<h1>Crear equipo</h1>} />
+        <Route path="/teams/details" element={<TeamPokemonList />} />
+        <Route path="/teams/details/pokemons/edit" element={<TeamPokemonEdit />} />
       </Route>
 
       <Route path="/unauthorized" element={<h1>No autorizado</h1>} />

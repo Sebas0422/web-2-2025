@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react';
-import { getAllTeams } from '../../services/teamService';
+import { getAllTeams, getPokemonsByTeamId } from '../../services/teamService';
+import { useNavigate } from 'react-router-dom';
 
 export const TeamList = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const fetchTeams = async () => {
-    setLoading(true);
-    setError('');
     try {
       const data = await getAllTeams();
-      setTeams(data);
+      const teamsWithPokemon = await Promise.all(
+        data.map(async (team) => {
+          const pokemons = await getPokemonsByTeamId({ id: team.id });
+          return { ...team, pokemons };
+        }),
+      );
+      setTeams(teamsWithPokemon);
     } catch (err) {
-      console.error('Error al obtener los equipos:', err);
+      console.error(err);
       setError('No se pudieron cargar los equipos.');
     } finally {
       setLoading(false);
@@ -23,6 +29,21 @@ export const TeamList = () => {
   useEffect(() => {
     fetchTeams();
   }, []);
+
+  const handleCreateTeam = () => {
+    // redireccionar o abrir modal para crear equipo
+    alert('Aquí podrías redirigir a /teams/create o abrir un modal');
+  };
+
+  const handleViewDetails = (team) => {
+    console.log(team);
+    navigate('/teams/details', {
+      state: {
+        teamPokemons: team.pokemons,
+        teamName: team.name,
+      },
+    });
+  };
 
   if (loading) {
     return (
@@ -40,7 +61,15 @@ export const TeamList = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">Mis Equipos</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-blue-700">Mis Equipos</h1>
+        <button
+          onClick={handleCreateTeam}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Crear nuevo equipo
+        </button>
+      </div>
 
       {teams.length === 0 ? (
         <p className="text-center text-gray-600">No tienes equipos registrados.</p>
@@ -56,8 +85,26 @@ export const TeamList = () => {
                 Creado el: {new Date(team.createdAt).toLocaleDateString()}
               </p>
 
+              <div className="mt-4 flex gap-2 flex-wrap">
+                {team.pokemons.map((p) => (
+                  <img
+                    key={p.id}
+                    src={
+                      p.pokemon?.image ||
+                      'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+                    }
+                    alt={p.pokemon?.name}
+                    className="w-10 h-10 rounded-full border"
+                    title={p.pokemon?.name}
+                  />
+                ))}
+              </div>
+
               <div className="mt-4 flex gap-2">
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                <button
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                  onClick={() => handleViewDetails(team)}
+                >
                   Ver Detalles
                 </button>
                 <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm">
