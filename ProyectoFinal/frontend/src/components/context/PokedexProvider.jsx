@@ -92,10 +92,10 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
-  const addItem = useCallback(async ({ item }) => {
+  const addItem = useCallback(async ({ item, imageFile }) => {
     setLoading(true);
     try {
-      const newItem = await createItem({ item });
+      const newItem = await createItem({ item, imageFile });
       setItemList((prevList) => [...prevList, newItem]);
     } catch (error) {
       console.error('Error al agregar el ítem:', error);
@@ -118,10 +118,10 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
-  const modifyItem = useCallback(async ({ id, item }) => {
+  const modifyItem = useCallback(async ({ id, item, imageFile }) => {
     setLoading(true);
     try {
-      const updatedItem = await updateItem({ id, item });
+      const updatedItem = await updateItem({ id, item, imageFile });
       setItemList((prevList) => prevList.map((i) => (i.id === id ? updatedItem : i)));
     } catch (error) {
       console.error('Error al actualizar el ítem:', error);

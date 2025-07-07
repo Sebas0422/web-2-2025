@@ -1,4 +1,5 @@
 import models from '../models/index.js';
+import { handleImageUpload } from '../utilities/handleImageUpload.js';
 
 const { Item } = models;
 
@@ -9,11 +10,24 @@ export const createItem = async (req, res) => {
     return res.status(400).json({ error: 'Todos los campos son requeridos' });
   }
 
+  const imageFile = req?.files?.imageFile;
+  if (!imageFile) {
+    return res.status(400).json({ error: 'Archivo de imagen es requerido' });
+  }
+
   try {
     const item = await Item.create({
       name,
       description,
     });
+    if (!item) {
+      return res.status(400).json({ error: 'Error al crear el item' });
+    }
+    const imagePath = await handleImageUpload(imageFile, 'items', item.id);
+    if (imagePath) {
+      await item.update({ imagePatch: imagePath });
+    }
+
     res.status(201).json(item);
   } catch (error) {
     console.error(error);
@@ -54,6 +68,13 @@ export const updateItem = async (req, res) => {
     const item = await Item.findByPk(id);
     if (!item) {
       return res.status(404).json({ error: 'Item no encontrado' });
+    }
+    const imageFile = req?.files?.imageFile;
+    if (imageFile) {
+      const imagePath = await handleImageUpload(imageFile, 'items', item.id);
+      if (imagePath) {
+        item.imagePatch = imagePath;
+      }
     }
 
     item.name = name || item.name;

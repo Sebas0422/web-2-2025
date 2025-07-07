@@ -8,6 +8,7 @@ export const ItemForm = () => {
   const { loading: loadingAuth } = useAuth();
   const { findItemById, modifyItem, addItem, loading } = usePokedexContext();
   const { id } = useParams();
+  const [imageFile, setImageFile] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -26,7 +27,6 @@ export const ItemForm = () => {
         setFormData({
           name: item.name || '',
           description: item.description || '',
-          imagePath: item.imagePath || '',
         });
       } catch (err) {
         setError('No se pudo cargar el ítem');
@@ -47,10 +47,10 @@ export const ItemForm = () => {
     e.preventDefault();
     try {
       if (id) {
-        await modifyItem({ id, item: formData });
+        await modifyItem({ id, item: formData, imageFile });
         alert('Ítem actualizado correctamente');
       } else {
-        await addItem({ item: formData });
+        await addItem({ item: formData, imageFile });
         alert('Ítem creado correctamente');
       }
       navigate('/admin/items');
@@ -58,6 +58,10 @@ export const ItemForm = () => {
       console.error(err);
       alert('Error al guardar el ítem');
     }
+  };
+
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
   };
 
   if (loading) return <p className="text-center mt-10">Cargando ítem...</p>;
@@ -73,6 +77,15 @@ export const ItemForm = () => {
       </h2>
 
       <div className="space-y-4">
+        <div className="flex flex-col">
+          <label className="mb-2 font-semibold text-gray-700">Imagen</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="border px-3 py-2 rounded-xl"
+          />
+        </div>
         <div>
           <label className="block font-semibold text-gray-700 mb-2">Nombre</label>
           <input

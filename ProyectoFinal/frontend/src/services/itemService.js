@@ -13,11 +13,18 @@ export const getItems = async () => {
   return response.json();
 };
 
-export const createItem = async ({ item }) => {
+export const createItem = async ({ item, imageFile }) => {
+  const formData = new FormData();
+  Object.entries(item).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  if (imageFile) {
+    formData.append('imageFile', imageFile);
+  }
   const response = await fetch(API_URL_ITEMS, {
     method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(item),
+    headers: getAuthHeaders(false),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -40,11 +47,18 @@ export const getItemById = async ({ id }) => {
   return response.json();
 };
 
-export const updateItem = async ({ id, item }) => {
+export const updateItem = async ({ id, item, imageFile }) => {
+  const formData = new FormData();
+  Object.entries(item).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  if (imageFile) {
+    formData.append('imageFile', imageFile);
+  }
   const response = await fetch(`${API_URL_ITEMS}/${id}`, {
     method: 'PUT',
     headers: getAuthHeaders(),
-    body: JSON.stringify(item),
+    body: formData,
   });
 
   if (!response.ok) {

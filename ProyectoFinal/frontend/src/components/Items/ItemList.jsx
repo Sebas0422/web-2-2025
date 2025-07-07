@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePokedexContext } from '../../hooks/usePokedexContext';
 import { useAuth } from '../../hooks/useAuth';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export const ItemList = () => {
   const { itemList, loadItems, loading: loadingContext, eliminateItem } = usePokedexContext();
   const { loading } = useAuth();
@@ -64,8 +65,9 @@ export const ItemList = () => {
           >
             <img
               src={
-                item.imagePath ||
-                'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+                item.imagePath
+                  ? `${API_URL}${item.imagePath}`
+                  : 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
               }
               alt={item.name}
               className="w-full h-40 object-contain bg-gray-100 rounded-t-xl"
