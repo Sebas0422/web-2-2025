@@ -45,6 +45,8 @@ export const ItemList = () => {
     return <p className="text-center mt-10">Cargando ítems...</p>;
   }
 
+  console.log('Lista de ítems:', itemList);
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

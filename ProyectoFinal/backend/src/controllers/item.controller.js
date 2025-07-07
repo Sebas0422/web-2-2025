@@ -25,7 +25,7 @@ export const createItem = async (req, res) => {
     }
     const imagePath = await handleImageUpload(imageFile, 'items', item.id);
     if (imagePath) {
-      await item.update({ imagePatch: imagePath });
+      await item.update({ imagePath: imagePath });
     }
 
     res.status(201).json(item);
@@ -73,7 +73,7 @@ export const updateItem = async (req, res) => {
     if (imageFile) {
       const imagePath = await handleImageUpload(imageFile, 'items', item.id);
       if (imagePath) {
-        item.imagePatch = imagePath;
+        item.imagePath = imagePath;
       }
     }
 

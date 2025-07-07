@@ -57,7 +57,7 @@ export const updateItem = async ({ id, item, imageFile }) => {
   }
   const response = await fetch(`${API_URL_ITEMS}/${id}`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
+    headers: getAuthHeaders(false),
     body: formData,
   });
 
