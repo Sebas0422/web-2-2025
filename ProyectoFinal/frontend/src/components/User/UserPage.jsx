@@ -18,8 +18,6 @@ export const UserPage = () => {
       case 'teams':
         setTitleContent('Gestión de Teams');
         break;
-      default:
-        setTitleContent('Selecciona una opción');
     }
   }, [location.pathname]);
 

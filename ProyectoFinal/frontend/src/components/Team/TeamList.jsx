@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { getAllTeams, getPokemonsByTeamId } from '../../services/teamService';
+import { getAllTeams, getPokemonsByTeamId, createTeam } from '../../services/teamService';
 import { useNavigate } from 'react-router-dom';
 
 export const TeamList = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [newTeamName, setNewTeamName] = useState('');
   const navigate = useNavigate();
 
   const fetchTeams = async () => {
@@ -31,16 +33,25 @@ export const TeamList = () => {
   }, []);
 
   const handleCreateTeam = () => {
-    // redireccionar o abrir modal para crear equipo
-    alert('Aquí podrías redirigir a /teams/create o abrir un modal');
+    setShowModal(true); // Mostrar modal
+  };
+
+  const handleCreateConfirm = async () => {
+    if (!newTeamName.trim()) return;
+    try {
+      await createTeam({ name: newTeamName.trim() });
+      setShowModal(false);
+      setNewTeamName('');
+      await fetchTeams();
+    } catch (error) {
+      console.error('Error al crear el equipo:', error);
+    }
   };
 
   const handleViewDetails = (team) => {
-    console.log(team);
     navigate('/teams/details', {
       state: {
-        teamPokemons: team.pokemons,
-        teamName: team.name,
+        id: team.id,
       },
     });
   };
@@ -70,6 +81,36 @@ export const TeamList = () => {
           Crear nuevo equipo
         </button>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+            <h2 className="text-xl font-semibold mb-4">Nuevo equipo</h2>
+            <input
+              type="text"
+              value={newTeamName}
+              onChange={(e) => setNewTeamName(e.target.value)}
+              placeholder="Nombre del equipo"
+              className="w-full border px-3 py-2 rounded mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCreateConfirm}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Crear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {teams.length === 0 ? (
         <p className="text-center text-gray-600">No tienes equipos registrados.</p>

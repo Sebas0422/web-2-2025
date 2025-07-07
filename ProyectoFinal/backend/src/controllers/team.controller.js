@@ -233,3 +233,28 @@ export const deleteMoveToTeamPokemon = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor', message: error });
   }
 };
+
+export const getMovesByTeamPokemonId = async (req, res) => {
+  const { id: teamPokemonId } = req.params;
+
+  if (!teamPokemonId) {
+    return res.status(400).json({ error: 'teamPokemonId es requerido' });
+  }
+
+  try {
+    const teamPokemonMoves = await TeamPokemonMove.findAll({
+      where: { teamPokemonId },
+      include: [
+        {
+          model: models.Move,
+          as: EntityTypes.Moves,
+        },
+      ],
+    });
+
+    res.status(200).json(teamPokemonMoves);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};

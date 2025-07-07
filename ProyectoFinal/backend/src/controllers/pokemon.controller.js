@@ -1,6 +1,7 @@
 import models from '../models/index.js';
 import { EntityTypes } from '../types/EntityTypes.js';
 const { Pokemon, Type, PokemonMove, Move } = models;
+import { Sequelize } from 'sequelize';
 
 export const createPokemon = async (req, res) => {
   const { name, baseHp, baseAttack, baseDefense, baseSpAttack, baseSpDefense, baseSpeed, typeId } = req.body;
@@ -219,6 +220,39 @@ export const removeMoveFromPokemon = async (req, res) => {
 
     await pokemonMove.destroy();
     res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor', message: error });
+  }
+};
+
+export const getPokemonBySearch = async (req, res) => {
+  const { name } = req.query;
+  console.log('Buscando Pokémon por nombre:', name);
+
+  if (!name) {
+    return res.status(400).json({ error: 'El nombre es requerido' });
+  }
+
+  try {
+    const pokemons = await Pokemon.findAll({
+      where: Sequelize.where(
+        Sequelize.fn('LOWER', Sequelize.col('Pokemon.name')), // 👈 cambio aquí
+        {
+          [Sequelize.Op.like]: `%${name.toLowerCase()}%`,
+        },
+      ),
+      include: {
+        model: Type,
+        as: EntityTypes.Types,
+      },
+    });
+
+    if (pokemons.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron Pokémon con ese nombre' });
+    }
+
+    res.status(200).json(pokemons);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor', message: error });

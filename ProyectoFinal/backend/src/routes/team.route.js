@@ -6,6 +6,7 @@ import {
   updateTemDetails,
   addMoveToTeamPokemon,
   getPokemonsByTeamId,
+  getMovesByTeamPokemonId,
 } from '../controllers/team.controller.js';
 
 export const TeamRoutes = () => {
@@ -17,6 +18,7 @@ export const TeamRoutes = () => {
   router.put('/details/:id', updateTemDetails);
   router.post('/details/:id/move', addMoveToTeamPokemon);
   router.get('/:id/pokemons', getPokemonsByTeamId);
+  router.get('/details/:id/moves', getMovesByTeamPokemonId);
 
   return router;
 };

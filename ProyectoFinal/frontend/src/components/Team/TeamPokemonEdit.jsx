@@ -1,5 +1,13 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { getMovesByPokemonId } from '../../services/pokemonService';
+import { getItems } from '../../services/itemService';
+import { getAllNatures } from '../../services/natureService';
+import {
+  assingMoveToTeamPokemon,
+  updateTeamPokemon,
+  getMovesByTeamPokemonId,
+} from '../../services/teamService';
 
 const STAT_KEYS = ['hp', 'atk', 'def', 'spAtk', 'spDef', 'speed'];
 
@@ -16,62 +24,78 @@ export const TeamPokemonEdit = () => {
   const teamPokemon = location.state?.teamPokemon;
   const navigate = useNavigate();
 
-  const [evs, setEvs] = useState({
-    hpEV: teamPokemon.hpEV,
-    atkEV: teamPokemon.atkEV,
-    defEV: teamPokemon.defEV,
-    spAtkEV: teamPokemon.spAtkEV,
-    spDefEV: teamPokemon.spDefEV,
-    speedEV: teamPokemon.speedEV,
-  });
-
-  const [ivs, setIvs] = useState({
-    hpIV: teamPokemon.hpIV,
-    atkIV: teamPokemon.atkIV,
-    defIV: teamPokemon.defIV,
-    spAtkIV: teamPokemon.spAtkIV,
-    spDefIV: teamPokemon.spDefIV,
-    speedIV: teamPokemon.speedIV,
-  });
-
+  const [evs, setEvs] = useState({});
+  const [ivs, setIvs] = useState({});
   const [natures, setNatures] = useState([]);
-  const [selectedNatureId, setSelectedNatureId] = useState(teamPokemon.natureId || '');
+  const [items, setItems] = useState([]);
+  const [abilities, setAbilities] = useState([]);
+  const [moves, setMoves] = useState([]);
+  const [nickname, setNickname] = useState(teamPokemon?.nickname || '');
+
+  const [selectedNatureId, setSelectedNatureId] = useState('');
+  const [selectedItemId, setSelectedItemId] = useState('');
+  const [selectedAbilityId, setSelectedAbilityId] = useState('');
+  const [selectedMoveIds, setSelectedMoveIds] = useState(['', '', '', '']);
+
   useEffect(() => {
-    const fetchNatures = async () => {
+    if (!teamPokemon) return;
+
+    setEvs({
+      hpEV: teamPokemon.hpEV,
+      atkEV: teamPokemon.atkEV,
+      defEV: teamPokemon.defEV,
+      spAtkEV: teamPokemon.spAtkEV,
+      spDefEV: teamPokemon.spDefEV,
+      speedEV: teamPokemon.speedEV,
+    });
+
+    setIvs({
+      hpIV: teamPokemon.hpIV,
+      atkIV: teamPokemon.atkIV,
+      defIV: teamPokemon.defIV,
+      spAtkIV: teamPokemon.spAtkIV,
+      spDefIV: teamPokemon.spDefIV,
+      speedIV: teamPokemon.speedIV,
+    });
+
+    setSelectedNatureId(teamPokemon.natureId || '');
+    setSelectedItemId(teamPokemon.itemId || '');
+    setSelectedAbilityId(teamPokemon.abilityId || '');
+    setNickname(teamPokemon.nickname || '');
+    getMovesByTeamPokemonId({ id: teamPokemon.id }).then((data) => {
+      const moveIds = data.map((move) => move.id);
+      if (moveIds.length < 4) {
+        const emptyMoves = Array(4 - moveIds.length).fill('');
+        setSelectedMoveIds([...moveIds, ...emptyMoves]);
+      } else {
+        setSelectedMoveIds(moveIds);
+      }
+    });
+
+    const fetchData = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/natures', {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        const data = await res.json();
-        setNatures(data);
+        const [naturesData, itemsData, /*abilitiesData,*/ movesData] = await Promise.all([
+          getAllNatures(),
+          getItems(),
+          //aRes.json(),
+          getMovesByPokemonId({ id: teamPokemon.pokemons.id }),
+        ]);
+        setNatures(naturesData || []);
+        setItems(itemsData || []);
+        setMoves(movesData || []);
       } catch (error) {
-        console.error('Error al obtener naturalezas:', error);
+        console.error('Error cargando datos:', error.message);
       }
     };
-    fetchNatures();
-  }, []);
+
+    fetchData();
+  }, [teamPokemon]);
+
   if (!teamPokemon) {
     return <div className="text-red-500">No se encontró el Pokémon.</div>;
   }
 
-  const { pokemons: baseData } = teamPokemon;
-
-  const handleEVChange = (key, value) => {
-    const parsed = parseInt(value, 10);
-    if (!isNaN(parsed) && parsed >= 0 && parsed <= 252) {
-      setEvs((prev) => ({ ...prev, [key]: parsed }));
-    }
-  };
-
-  const handleIVChange = (key, value) => {
-    const parsed = parseInt(value, 10);
-    if (!isNaN(parsed) && parsed >= 0 && parsed <= 31) {
-      setIvs((prev) => ({ ...prev, [key]: parsed }));
-    }
-  };
+  const baseData = teamPokemon.pokemons;
   const selectedNature = natures.find((n) => n.id === selectedNatureId);
 
   const getBaseStat = (key) => {
@@ -100,24 +124,120 @@ export const TeamPokemonEdit = () => {
     return 1.0;
   };
 
+  const handleEVChange = (key, value) => {
+    const parsed = parseInt(value, 10);
+    if (!isNaN(parsed) && parsed >= 0 && parsed <= 252) {
+      setEvs((prev) => ({ ...prev, [key]: parsed }));
+    }
+  };
+
+  const handleIVChange = (key, value) => {
+    const parsed = parseInt(value, 10);
+    if (!isNaN(parsed) && parsed >= 0 && parsed <= 31) {
+      setIvs((prev) => ({ ...prev, [key]: parsed }));
+    }
+  };
+
+  const handleMoveChange = (index, value) => {
+    const updated = [...selectedMoveIds];
+    updated[index] = value;
+    setSelectedMoveIds(updated);
+  };
+
+  const getAvailableMoves = (index) => {
+    const selected = selectedMoveIds.filter((_, i) => i !== index);
+    return moves.filter((m) => !selected.includes(m.id));
+  };
+
+  const handleSaveChanges = async () => {
+    //validar campos que no esten vacios y mandar undefined o no mandarlos
+    const updatedPokemon = {
+      nickname: nickname || undefined,
+      itemId: selectedItemId || undefined,
+      abilityId: selectedAbilityId || undefined,
+      natureId: selectedNatureId || undefined,
+      hpEV: evs.hpEV || 0,
+      atkEV: evs.atkEV || 0,
+      defEV: evs.defEV || 0,
+      spAtkEV: evs.spAtkEV || 0,
+      spDefEV: evs.spDefEV || 0,
+      speedEV: evs.speedEV || 0,
+      hpIV: ivs.hpIV || 0,
+      atkIV: ivs.atkIV || 0,
+      defIV: ivs.defIV || 0,
+      spAtkIV: ivs.spAtkIV || 0,
+      spDefIV: ivs.spDefIV || 0,
+      speedIV: ivs.speedIV || 0,
+    };
+    console.log('Datos a guardar:', updatedPokemon);
+    try {
+      await Promise.all[
+        selectedMoveIds.map(async (moveId) => {
+          if (moveId === '') return;
+          await assingMoveToTeamPokemon({ teamId: teamPokemon.id, moveId });
+        })
+      ];
+      await updateTeamPokemon({
+        id: teamPokemon.id,
+        teamPokemon: updatedPokemon,
+      });
+      alert('Cambios guardados correctamente');
+      navigate(-1);
+    } catch (error) {
+      console.error('Error al guardar los cambios:', error);
+      alert('Error al guardar los cambios. Por favor, inténtalo de nuevo.');
+    }
+  };
+
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white rounded-lg shadow">
+    <div className="p-6 max-w-5xl mx-auto bg-white rounded-lg shadow">
       <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">
         Editar Pokémon del Equipo
       </h2>
 
-      <div className="flex items-center gap-4 mb-6">
-        <img
-          src={
-            baseData.imagePatch ||
-            'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
-          }
-          alt={baseData.name}
-          className="w-24 h-24 object-contain"
-        />
-        <div>
-          <h3 className="text-xl font-semibold capitalize">{baseData.name}</h3>
-          <p className="text-sm text-gray-500">Nickname: {teamPokemon.nickname || 'Sin apodo'}</p>
+      <div className="flex flex-col md:flex-row gap-6 mb-6">
+        <div className="flex-shrink-0 text-center">
+          <img
+            src={
+              baseData.imagePatch ||
+              'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+            }
+            alt={baseData.name}
+            className="w-24 h-24 object-contain mx-auto"
+          />
+          <h3 className="text-xl font-semibold capitalize mt-2">{baseData.name}</h3>
+          <p className="text-sm text-gray-500">
+            Nickname:
+            <input
+              value={nickname}
+              min={0}
+              max={31}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-21 text-center border rounded ml-2"
+            />
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <Select
+            label="Item"
+            value={selectedItemId}
+            onChange={setSelectedItemId}
+            options={items}
+          />
+
+          {selectedMoveIds.map((moveId, index) => (
+            <Select
+              key={index}
+              label={`Movimiento ${index + 1}`}
+              value={moveId}
+              onChange={(val) => handleMoveChange(index, val)}
+              options={getAvailableMoves(index)}
+              renderOption={(opt) =>
+                `${opt.moves?.name} - ${opt.moves?.type} - ${opt.moves?.power}`
+              }
+            />
+          ))}
         </div>
       </div>
 
@@ -170,6 +290,7 @@ export const TeamPokemonEdit = () => {
           })}
         </tbody>
       </table>
+
       <div className="my-6">
         <label className="block mb-2 font-semibold">Naturaleza:</label>
         <select
@@ -195,7 +316,7 @@ export const TeamPokemonEdit = () => {
           Cancelar
         </button>
         <button
-          onClick={() => alert('Guardar funcionalidad próximamente')}
+          onClick={handleSaveChanges}
           className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
         >
           Guardar Cambios
@@ -204,3 +325,21 @@ export const TeamPokemonEdit = () => {
     </div>
   );
 };
+
+const Select = ({ label, value, onChange, options, labelKey = 'name', renderOption }) => (
+  <div>
+    <label className="block text-sm font-semibold mb-1">{label}</label>
+    <select
+      value={value || ''}
+      onChange={(e) => onChange(Number(e.target.value))}
+      className="w-full border px-3 py-2 rounded"
+    >
+      <option value="">-- Seleccionar --</option>
+      {options.map((opt) => (
+        <option key={opt.id} value={opt.id}>
+          {renderOption ? renderOption(opt) : opt[labelKey]}
+        </option>
+      ))}
+    </select>
+  </div>
+);
