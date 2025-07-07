@@ -1,7 +1,7 @@
-export const getAuthHeaders = () => {
+export const getAuthHeaders = (isContentType = true) => {
   const token = localStorage.getItem('token');
   return {
-    'Content-Type': 'application/json',
+    ...(isContentType ? { 'Content-Type': 'application/json' } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };

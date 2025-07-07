@@ -2,6 +2,7 @@ import models from '../models/index.js';
 import { EntityTypes } from '../types/EntityTypes.js';
 const { Pokemon, Type, PokemonMove, Move } = models;
 import { Sequelize } from 'sequelize';
+import { handleImageUpload } from '../utilities/handleImageUpload.js';
 
 export const createPokemon = async (req, res) => {
   const { name, baseHp, baseAttack, baseDefense, baseSpAttack, baseSpDefense, baseSpeed, typeId } = req.body;
@@ -35,6 +36,11 @@ export const createPokemon = async (req, res) => {
     return res.status(400).json({ errors });
   }
 
+  const imageFile = req?.files.imageFile;
+
+  if (!imageFile) {
+    return res.status(400).json({ error: 'No image file uploaded' });
+  }
   try {
     const pokemon = await Pokemon.create({
       name,
@@ -46,7 +52,13 @@ export const createPokemon = async (req, res) => {
       baseSpeed,
       typeId,
     });
-
+    if (!pokemon) {
+      return res.status(400).json({ error: 'Error al crear el Pokemon' });
+    }
+    const imagePath = await handleImageUpload(imageFile, 'pokemons', pokemon.id);
+    if (imagePath) {
+      await pokemon.update({ imagePatch: imagePath });
+    }
     res.status(201).json(pokemon);
   } catch (error) {
     console.error(error);
@@ -111,6 +123,13 @@ export const updatePokemon = async (req, res) => {
       baseSpeed,
       typeId,
     });
+    const imageFile = req?.files.imageFile;
+    if (imageFile) {
+      const imagePath = await handleImageUpload(imageFile, 'pokemons', pokemon.id);
+      if (imagePath) {
+        await pokemon.update({ imagePatch: imagePath });
+      }
+    }
 
     res.status(200).json(pokemon);
   } catch (error) {

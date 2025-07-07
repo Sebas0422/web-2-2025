@@ -42,8 +42,8 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
-  const addPokemon = useCallback(async ({ pokemon }) => {
-    const newPokemon = await createPokemon({ pokemon });
+  const addPokemon = useCallback(async ({ pokemon, imageFile }) => {
+    const newPokemon = await createPokemon({ pokemon, imageFile });
     setPokemonList((prevList) => [...prevList, newPokemon]);
   }, []);
 
@@ -57,14 +57,14 @@ export const PokedexContextProvider = ({ children }) => {
     }
   }, []);
 
-  const modifyPokemon = useCallback(async ({ id, pokemon }) => {
+  const modifyPokemon = useCallback(async ({ id, pokemon, imageFile }) => {
     try {
-      const updatedPokemon = await updatePokemon({ id, pokemon });
+      const updatedPokemon = await updatePokemon({ id, pokemon, imageFile });
       console.log('Pokémon actualizado:', updatedPokemon);
       setPokemonList((prevList) => prevList.map((p) => (p.id === id ? updatedPokemon : p)));
     } catch (error) {
       console.error('Error al actualizar el Pokémon:', error);
-      setError('Error al actualizar el Pokémon');
+      setError(error.message);
     }
   }, []);
 

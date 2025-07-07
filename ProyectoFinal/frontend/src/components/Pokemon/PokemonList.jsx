@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { usePokedexContext } from '../../hooks/usePokedexContext';
 
+const API_URL = import.meta.env.VITE_API_URL;
 export const PokemonList = () => {
   const { loading } = useAuth();
   const {
@@ -60,8 +61,9 @@ export const PokemonList = () => {
           >
             <img
               src={
-                pokemon.imagePatch ||
-                'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+                pokemon.imagePatch
+                  ? `${API_URL}${pokemon.imagePatch}`
+                  : 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
               }
               alt={pokemon.name}
               className="w-full h-48 object-contain bg-gray-100"

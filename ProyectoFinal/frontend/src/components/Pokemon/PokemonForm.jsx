@@ -12,6 +12,7 @@ export const PokemonForm = () => {
   const [formData, setFormData] = useState(null);
   const [types, setTypes] = useState([]);
   const { loading, findPokemonById, error, modifyPokemon, addPokemon } = usePokedexContext();
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     if (loadingAuth) return console.log('Cargando autenticación...');
@@ -67,26 +68,13 @@ export const PokemonForm = () => {
     e.preventDefault();
     console.log('Formulario enviado:', formData);
     if (id) {
-      modifyPokemon({ id, pokemon: formData })
-        .then(() => {
-          console.log('Pokémon actualizado correctamente');
-          navigate('/admin/pokemons');
-        })
-        .catch((err) => {
-          console.error('Error al actualizar el Pokémon:', err);
-          alert('Error al actualizar el Pokémon. Por favor, inténtalo de nuevo.');
-        });
+      modifyPokemon({ id, pokemon: formData, imageFile })
+        .then(() => navigate('/admin/pokemons'))
+        .catch((err) => alert('Error al actualizar el Pokémon', err));
     } else {
-      console.log('Crear nuevo Pokémon:', formData);
-      addPokemon({ pokemon: formData })
-        .then(() => {
-          console.log('Pokémon creado correctamente');
-          navigate('/admin/pokemons');
-        })
-        .catch((err) => {
-          console.error('Error al crear el Pokémon:', err);
-          alert('Error al crear el Pokémon. Por favor, inténtalo de nuevo.');
-        });
+      addPokemon({ pokemon: formData, imageFile })
+        .then(() => navigate('/admin/pokemons'))
+        .catch((err) => alert('Error al crear el Pokémon', err));
     }
   };
 
@@ -95,6 +83,10 @@ export const PokemonForm = () => {
     navigate(`/admin/pokemons/${id}/movements`, {
       state: { pokemon: formData },
     });
+  };
+
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
   };
 
   return (
@@ -106,6 +98,15 @@ export const PokemonForm = () => {
         {id ? 'Editar' : 'Crear'} Pokémon
       </h2>
 
+      <div className="flex flex-col">
+        <label className="mb-2 font-semibold text-gray-700">Imagen</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="border px-3 py-2 rounded-xl"
+        />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[
           { name: 'name', type: 'text', label: 'Nombre' },

@@ -30,7 +30,6 @@ export const SidebarWithToggle = ({
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
       <aside
         ref={sidebarRef}
         className={`transition-all duration-300 bg-gray-800 text-white space-y-2 p-4 ${
@@ -72,7 +71,6 @@ export const SidebarWithToggle = ({
           <ProfileMenu />
         </div>
 
-        {/* Render contenido */}
         <div className="bg-white p-4 rounded shadow">{opcionRender()}</div>
       </main>
     </div>

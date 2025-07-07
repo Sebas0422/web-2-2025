@@ -19,6 +19,8 @@ const calculateHp = (base, ev, iv) => {
   return Math.floor(((2 * base + iv + Math.floor(ev / 4)) * 100) / 100) + 100 + 10;
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export const TeamPokemonEdit = () => {
   const location = useLocation();
   const teamPokemon = location.state?.teamPokemon;
@@ -189,6 +191,8 @@ export const TeamPokemonEdit = () => {
     }
   };
 
+  console.log('Base Data:', baseData);
+
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white rounded-lg shadow">
       <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">
@@ -199,8 +203,9 @@ export const TeamPokemonEdit = () => {
         <div className="flex-shrink-0 text-center">
           <img
             src={
-              baseData.imagePatch ||
-              'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+              baseData.imagePatch
+                ? `${API_URL}${baseData.imagePatch}`
+                : 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
             }
             alt={baseData.name}
             className="w-24 h-24 object-contain mx-auto"

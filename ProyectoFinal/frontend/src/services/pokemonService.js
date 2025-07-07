@@ -1,23 +1,30 @@
 import { getAuthHeaders } from '../utilities/getAuthHeaders';
 
 const API_URL_POKEMON = `${import.meta.env.VITE_API_URL}/api/pokemons`;
-export const createPokemon = async ({ pokemon }) => {
-  try {
-    const response = await fetch(API_URL_POKEMON, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(pokemon),
-    });
+export const createPokemon = async ({ pokemon, imageFile }) => {
+  const formData = new FormData();
 
-    if (!response.ok) {
-      throw new Error('Error al crear el Pokemon');
-    }
+  Object.entries(pokemon).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error('Error al crear el Pokemon:', error);
-    throw error;
+  if (imageFile) {
+    formData.append('imageFile', imageFile);
   }
+
+  const response = await fetch(API_URL_POKEMON, {
+    method: 'POST',
+    headers: {
+      ...getAuthHeaders(false),
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al crear el Pokemon');
+  }
+
+  return await response.json();
 };
 
 export const getPokemons = async () => {
@@ -56,24 +63,30 @@ export const getPokemonById = async ({ id }) => {
   }
 };
 
-export const updatePokemon = async ({ id, pokemon }) => {
-  try {
-    console.log('Actualizando Pokemon:', id, pokemon);
-    const response = await fetch(`${API_URL_POKEMON}/${id}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(pokemon),
-    });
+export const updatePokemon = async ({ id, pokemon, imageFile }) => {
+  const formData = new FormData();
 
-    if (!response.ok) {
-      throw new Error('Error al actualizar el Pokemon');
-    }
+  Object.entries(pokemon).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error('Error al actualizar el Pokemon:', error);
-    throw error;
+  if (imageFile) {
+    formData.append('imageFile', imageFile);
   }
+
+  const response = await fetch(`${API_URL_POKEMON}/${id}`, {
+    method: 'PUT',
+    headers: {
+      ...getAuthHeaders(false),
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar el Pokemon');
+  }
+
+  return await response.json();
 };
 
 export const deletePokemon = async ({ id }) => {

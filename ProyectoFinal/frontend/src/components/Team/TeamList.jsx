@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAllTeams, getPokemonsByTeamId, createTeam } from '../../services/teamService';
 import { useNavigate } from 'react-router-dom';
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export const TeamList = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +69,7 @@ export const TeamList = () => {
       <div className="text-red-600 bg-red-100 p-4 rounded-lg max-w-md mx-auto mt-4">{error}</div>
     );
   }
-
+  console.log('TeamList: teams', teams);
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -131,12 +131,13 @@ export const TeamList = () => {
                   <img
                     key={p.id}
                     src={
-                      p.pokemon?.image ||
-                      'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+                      p.pokemons?.imagePatch
+                        ? `${API_URL}${p.pokemons?.imagePatch}`
+                        : 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
                     }
-                    alt={p.pokemon?.name}
+                    alt={p.pokemons?.name}
                     className="w-10 h-10 rounded-full border"
-                    title={p.pokemon?.name}
+                    title={p.pokemons?.name}
                   />
                 ))}
               </div>

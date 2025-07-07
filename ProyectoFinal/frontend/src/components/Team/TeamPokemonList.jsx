@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { getPokemonsByTeamId } from '../../services/teamService';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export const TeamPokemonList = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -113,8 +114,9 @@ export const TeamPokemonList = () => {
             >
               <img
                 src={
-                  tp.pokemons.imagePatch ||
-                  'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
+                  tp.pokemons.imagePatch
+                    ? `${API_URL}${tp.pokemons.imagePatch}`
+                    : 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg'
                 }
                 alt={tp.pokemons.name}
                 className="w-24 h-24 object-contain mx-auto mb-2"
